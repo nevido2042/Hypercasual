@@ -1,0 +1,9 @@
+1. 3D 캐릭터 모델
+
+에셋명: Cube People - Demo
+
+제작자: Gesta2
+
+출처: https://assetstore.unity.com/packages/3d/characters/humanoids/humans/cube-people-demo-193803?utm_medium=affiliate#publisher
+
+라이선스: Unity Asset Store 정식 무료 라이선스 (Standard Unity Asset Store EULA)
