@@ -1,26 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
-public class CubePeopleTraffic : MonoBehaviour
+namespace Hero
 {
+    /// <summary>
+    /// 군중 AI 무작위 이동 제어 스크립트
+    /// </summary>
+    public class CubePeopleTraffic : MonoBehaviour
+    {
         NavMeshAgent agent;
-        public Vector2 minmaxSpeed = new Vector2(0.5f, 1.5f);
+        public Vector2 minmaxSpeed = new Vector2(0.5f, 1.5f); // AI 이동 속도 범위
 
-        public int playerState = 0; //0=진입, 1=머무름
+        public int playerState = 0; // 0: 이동, 1: 대기 
         public bool refreshDestination = false;
         bool dice;
 
-        public float pauseTime = 1;
+        public float pauseTime = 1; // 대기 시간
         float timeCount;
 
-        // 웨이포인트(경유지)
-        public int targetPoint;
-        public GameObject destinationFolder;
+        public int targetPoint; // 목표 웨이포인트 인덱스
+        public GameObject destinationFolder; // 웨이포인트 그룹 폴더
         List<Transform> wayPoints = new List<Transform>();
         
-        // 애니메이션
         Animator anim;
 
         void Start()
@@ -29,6 +31,7 @@ public class CubePeopleTraffic : MonoBehaviour
             agent = GetComponent<NavMeshAgent>();
             timeCount = pauseTime;
 
+            // 목적지 폴더 내의 모든 자식 요소를 웨이포인트로 등록
             if (destinationFolder != null)
             {
                 int count = destinationFolder.transform.childCount;
@@ -37,75 +40,66 @@ public class CubePeopleTraffic : MonoBehaviour
                     wayPoints.Add(destinationFolder.transform.GetChild(i));
                 }
             }
-            else
-            {
-                print("DestinationFolder is empty, navmesh does not work. (Scene object " + transform.gameObject.name.ToString() + ").");
-            }
 
+            // 초기 속도 및 목적지 무작위 설정
             agent.speed = RandomSpeed();
             targetPoint = RandomPoint();
             refreshDestination = true;
         }
 
-
         void Update()
         {
-            if (wayPoints.Count == 0)
-            {
-                return;
-            }
-            else
-            {
-                float dist = Vector3.Distance(wayPoints[targetPoint].position, transform.position);
-                if (dist < 0.35f)
-                {
-                    // 도착함
-                    if (!dice)
-                    {
-                        playerState = Random.Range(0, 2);
-                        dice = true;
-                    }
+            if (wayPoints.Count == 0) return;
 
-                    if (playerState == 1)
-                    {
-                        timeCount -= Time.deltaTime;    // 대기
-                        if (timeCount < 0)
-                        {
-                            timeCount = pauseTime;
-                            dice = false;
-                            playerState = 0;    // 상태 초기화
-                        }
-                    }
-                    else
-                    {
-                        if (dice) dice = false;
-                        targetPoint = RandomPoint();    // 새로운 목표지점
-                        refreshDestination = true;
-                    }
+            // 목적지 도달 확인
+            float dist = Vector3.Distance(wayPoints[targetPoint].position, transform.position);
+            if (dist < 0.35f)
+            {
+                // 상태 주사위 굴리기 (이동할지 대기할지)
+                if (!dice)
+                {
+                    playerState = Random.Range(0, 2);
+                    dice = true;
                 }
 
-                if (refreshDestination)
+                if (playerState == 1) // 대기 상태
                 {
-                    agent.SetDestination(wayPoints[targetPoint].position);
-                    refreshDestination = false;
+                    timeCount -= Time.deltaTime;    
+                    if (timeCount < 0)
+                    {
+                        timeCount = pauseTime;
+                        dice = false;
+                        playerState = 0;    
+                    }
+                }
+                else // 새로운 경로 탐색
+                {
+                    if (dice) dice = false;
+                    targetPoint = RandomPoint();    
+                    refreshDestination = true;
                 }
             }
+
+            // 목적지 갱신
+            if (refreshDestination)
+            {
+                agent.SetDestination(wayPoints[targetPoint].position);
+                refreshDestination = false;
+            }
+
+            // 보행 애니메이션 속도 비례 전환
             anim.SetFloat("Walk", agent.velocity.magnitude);
         }
 
         public int RandomPoint()
         {
-            int rPoint = -1;
-            if (wayPoints.Count > 0)
-            {
-                rPoint = Random.Range(0, wayPoints.Count);
-                
-            }
-            return rPoint;
+            if (wayPoints.Count > 0) return Random.Range(0, wayPoints.Count);
+            return -1;
         }
 
-    public float RandomSpeed()
-    {
-        return Random.Range(minmaxSpeed.x, minmaxSpeed.y);
+        public float RandomSpeed()
+        {
+            return Random.Range(minmaxSpeed.x, minmaxSpeed.y);
+        }
     }
 }

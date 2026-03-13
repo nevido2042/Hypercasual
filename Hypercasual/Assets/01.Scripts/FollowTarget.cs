@@ -1,36 +1,39 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class FollowTarget : MonoBehaviour
+namespace Hero
 {
+    /// <summary>
+    /// 대상을 따라다니는 메인 카메라 컨트롤러
+    /// </summary>
+    public class FollowTarget : MonoBehaviour
+    {
+        public Transform target;        // 따라갈 대상
+        public Vector3 offsetPos;       // 대상과의 거리 간격
+        public float moveSpeed = 5;     // 위치 이동 속도
+        public float turnSpeed = 10;    // 회전 속도
+        public float smoothSpeed = 0.5f; // 부드러운 전환 속도
 
-        public Transform target;
-        public Vector3 offsetPos;
-        public float moveSpeed = 5;
-        public float turnSpeed = 10;
-        public float smoothSpeed = 0.5f;
-
-        public bool camRotation;    //TODO: 플레이 중에 활성화하면 오류가 발생합니다.
+        public bool camRotation;        // 카메라 회전 모드 여부
 
         Quaternion targetRotation;
         Vector3 targetPos;
         bool smoothRotating = false;
 
-
         void Update()
         {
-
             if (!camRotation)
             {
+                // 일반적인 쿼터뷰 모드
                 MoveWithTarget();
                 LookAtTarget();
             }
             else
             {
+                // 캐릭터 회전 동기화 모드
                 LookatRotation();
             }
 
+            // G/H 키를 통해 씬 내에서 카메라 각도 조절 테스트 가능
             if (Input.GetKeyDown(KeyCode.G) && !smoothRotating)
             {
                 StartCoroutine("RotateAroundTarget", 45);
@@ -41,24 +44,17 @@ public class FollowTarget : MonoBehaviour
                 StartCoroutine("RotateAroundTarget", -45);
             }
         }
-        /*
-        void LateUpdate()
-        {
-            if (camRotation)
-            {
-                LookatRotation();
-                print("LookatRotation");
-            }
-        }
-        */
+
         void MoveWithTarget()
         {
+            if (!target) return;
             targetPos = target.transform.position + offsetPos;
             transform.position = Vector3.Lerp(transform.position, targetPos, moveSpeed * Time.deltaTime);
         }
 
         void LookAtTarget()
         {
+            if (!target) return;
             targetRotation = Quaternion.LookRotation(target.position - transform.position);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
         }
@@ -74,26 +70,24 @@ public class FollowTarget : MonoBehaviour
             float currentHeight = transform.position.y;
 
             currentRotationAngle = Mathf.LerpAngle(currentRotationAngle, wantedRotationAngle, smoothSpeed * Time.deltaTime);
-
             currentHeight = Mathf.Lerp(currentHeight, wantedHeight, moveSpeed * Time.deltaTime);
 
             var currentRotation = Quaternion.Euler(0, currentRotationAngle, 0);
 
             transform.position = target.position;
             transform.position -= currentRotation * Vector3.forward * -offsetPos.z;
-
             transform.position = new Vector3(transform.position.x, currentHeight, transform.position.z);
 
             transform.LookAt(target);
         }
 
-        IEnumerator RotateAroundTarget(float angle)
+        System.Collections.IEnumerator RotateAroundTarget(float angle)
         {
             Vector3 vel = Vector3.zero;
             Vector3 targerOffsetPos = Quaternion.Euler(0, angle, 0) * offsetPos;
             float dist = Vector3.Distance(offsetPos, targerOffsetPos);
 
-            smoothRotating = true; // 부드러운 회전 시작
+            smoothRotating = true;
 
             while (dist > 0.02f)
             {
@@ -102,7 +96,8 @@ public class FollowTarget : MonoBehaviour
                 yield return null;
             }
 
-        smoothRotating = false; // 부드러운 회전 종료
-        offsetPos = targerOffsetPos;
+            smoothRotating = false;
+            offsetPos = targerOffsetPos;
+        }
     }
 }

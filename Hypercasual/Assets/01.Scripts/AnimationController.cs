@@ -1,44 +1,37 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class AnimationController : MonoBehaviour
+namespace Hero
 {
-    Animator anim;
-    EightDirectionMovement movement;
-    public bool run;
-
-    void Start()
+    /// <summary>
+    /// 캐릭터 애니메이터 컨트롤러 및 상태 연결을 관리
+    /// </summary>
+    public class AnimationController : MonoBehaviour
     {
-        anim = GetComponent<Animator>();
-        movement = GetComponent<EightDirectionMovement>();
-        if (run) run = false;
-    }
+        Animator anim;
+        EightDirectionMovement movement;
+        PlayerMining mining;
 
-    void Update()
-    {
-        bool mine = false;
-
-        if (movement != null)
+        void Start()
         {
-            // 조이스틱이나 키보드 입력 크기가 0.5보다 크면 달리기 애니메이션 재생
-            float mag = movement.input.magnitude;
-            run = mag > 0.5f;
-            mine = movement.isMining;
-        }
-        else
-        {
-            if (Input.GetAxisRaw("Vertical") == 0 && Input.GetAxisRaw("Horizontal") == 0)
-            {
-                run = false;
-            }
-            else
-            {
-                run = true;
-            }
+            anim = GetComponent<Animator>();
+            movement = GetComponent<EightDirectionMovement>();
+            mining = GetComponent<PlayerMining>();
         }
 
-        anim.SetBool("Run", run);
-        anim.SetBool("IsMining", mine);
+        void Update()
+        {
+            // 1. 이동 상태에 따른 Run 파라미터 업데이트
+            if (movement != null)
+            {
+                float mag = movement.input.magnitude;
+                anim.SetBool("Run", mag > 0.5f); // 입력 크기가 일정 이상일 때 달리기
+            }
+
+            // 2. 채광 가능 여부에 따른 IsMining 파라미터 업데이트 (상체 레이어용)
+            if (mining != null)
+            {
+                anim.SetBool("IsMining", mining.isMining);
+            }
+        }
     }
 }

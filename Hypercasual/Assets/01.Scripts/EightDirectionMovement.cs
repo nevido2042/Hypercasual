@@ -1,56 +1,52 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class EightDirectionMovement : MonoBehaviour
+namespace Hero
 {
+    /// <summary>
+    /// 플레이어의 8방향 이동 및 회전 로직 (채광 기능 분리됨)
+    /// </summary>
+    public class EightDirectionMovement : MonoBehaviour
+    {
+        public float velocity = 5;      // 이동 속도
+        public float turnSpeed = 10;    // 회전 속도
 
-    public float velocity = 5;
-    public float turnSpeed = 10;
+        [HideInInspector]
+        public Vector2 input;           // 입력값 (조이스틱 또는 키보드)
+        float angle;                    // 목표 회전 각도
 
-    [HideInInspector]
-    public Vector2 input;
-    float angle;
+        Quaternion targetRotation;      // 목표 회전값
+        public Transform cam;           // 카메라 참조
 
-    [HideInInspector]
-    public bool isMining = false;
+        FollowTarget ft;               // 카메라 팔로우 스크립트 참조
 
-    [Header("Mining Stats")]
-    public float miningRange = 1.5f;     // 탐색 및 타격 반경
-    public int maxMineTargets = 1;       // 한 번에 캘 수 있는 최대 바위 수
-    public LayerMask rockLayer;          // 바위 오브젝트들이 속한 레이어
-
-        Quaternion targetRotation;
-        public Transform cam; // 카메라 트랜스폼
-
-        FollowTarget ft;
+        [HideInInspector]
+        public VirtualJoystick joystick; // 조이스틱 인터페이스 참조
 
         void Start()
         {
+            // 메인 카메라 및 관련 스크립트 캐싱
             cam = Camera.main.transform;
             if (cam.GetComponent<FollowTarget>())
             {
                 ft = cam.GetComponent<FollowTarget>();
             }
-
         }
 
         void Update()
         {
-            GetInput();
-            CheckForRocks();
+            GetInput(); // 입력 받기
 
+            // 입력이 거의 없으면 이동 로직 취소
             if (Mathf.Abs(input.x) < 0.1 && Mathf.Abs(input.y) < 0.1) return;
 
-            CalculateDirection();
-            Rotate();
-            Move();
-
+            CalculateDirection(); // 이동 방향 계산
+            Rotate();             // 캐릭터 회전
+            Move();               // 캐릭터 이동
         }
 
-        [HideInInspector]
-        public VirtualJoystick joystick;
-
+        /// <summary>
+        /// 조이스틱 또는 키보드로부터 입력 벡터를 가져옴
+        /// </summary>
         void GetInput()
         {
             if (joystick != null && joystick.inputVector != Vector2.zero)
@@ -64,6 +60,9 @@ public class EightDirectionMovement : MonoBehaviour
             }
         }
 
+        /// <summary>
+        /// 카메라 각도를 고려한 이동 방향 계산
+        /// </summary>
         void CalculateDirection()
         {
             angle = Mathf.Atan2(input.x, input.y);
@@ -71,10 +70,14 @@ public class EightDirectionMovement : MonoBehaviour
             angle += cam.eulerAngles.y;
         }
 
+        /// <summary>
+        /// 계산된 각도로 캐릭터를 부드럽게 회전
+        /// </summary>
         void Rotate()
         {
             if (ft != null && ft.camRotation)
             {
+                // 카메라 회전 방식이 활성화된 경우의 예외 처리
                 transform.rotation = Quaternion.Euler(0, input.x * 1.5f, 0) * transform.rotation;
             }
             else
@@ -85,58 +88,13 @@ public class EightDirectionMovement : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
         }
 
-    void Move()
-    {
-        float speedMultiplier = Mathf.Clamp01(input.magnitude);
-        transform.position += transform.forward * velocity * speedMultiplier * Time.deltaTime;
-    }
-
-    void CheckForRocks()
-    {
-        isMining = false;
-
-        // 지정된 레이어(rockLayer)만 탐색하여 성능 최적화
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, miningRange, rockLayer);
-        foreach (var hitCollider in hitColliders)
+        /// <summary>
+        /// 캐릭터 전방 방향으로 실제 위치 이동
+        /// </summary>
+        void Move()
         {
-            MineableRock rock = hitCollider.GetComponent<MineableRock>();
-            if (rock != null && rock.CanBeMined)
-            {
-                isMining = true;
-                break;
-            }
-        }
-    }
-
-    public void PerformMiningHit()
-    {
-        // 지정된 레이어만 타격 판정
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, miningRange, rockLayer);
-        
-        List<MineableRock> rocksInRange = new List<MineableRock>();
-
-        foreach (var hitCollider in hitColliders)
-        {
-            MineableRock rock = hitCollider.GetComponent<MineableRock>();
-            if (rock != null && rock.CanBeMined)
-            {
-                rocksInRange.Add(rock);
-            }
-        }
-
-        // 플레이어와 가까운 순서대로 정렬
-        rocksInRange.Sort((a, b) => 
-            Vector3.Distance(transform.position, a.transform.position).CompareTo(
-            Vector3.Distance(transform.position, b.transform.position)));
-
-        // 지정된 횟수(maxMineTargets)만큼 바위를 채광
-        int minedCount = 0;
-        foreach (var rock in rocksInRange)
-        {
-            if (minedCount >= maxMineTargets) break;
-            
-            rock.Mine(); // 바위 채광 실행 (DOTween 애니메이션 등)
-            minedCount++;
+            float speedMultiplier = Mathf.Clamp01(input.magnitude);
+            transform.position += transform.forward * velocity * speedMultiplier * Time.deltaTime;
         }
     }
 }
