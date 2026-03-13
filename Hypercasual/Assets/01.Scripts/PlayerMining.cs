@@ -13,8 +13,24 @@ namespace Hero
         public int maxMineTargets = 1;       // 한 번에 타격 가능한 최대 목표 수 (업그레이드용)
         public LayerMask rockLayer;          // 바위 오브젝트들이 속한 물리 레이어
 
+        [Header("채광 도구")]
+        public GameObject miningTool;        // 손에 들 곡괭이 오브젝트
+
         [HideInInspector]
         public bool isMining = false;        // 현재 주변에 캘 바위가 있는지 상태
+
+        void Awake()
+        {
+            // 설정된 곡괭이가 없다면 자식 중에서 'Pickaxe' 이름을 탐색
+            if (miningTool == null)
+            {
+                Transform foundTool = transform.FindDeepChild("Pickaxe");
+                if (foundTool != null) miningTool = foundTool.gameObject;
+            }
+
+            // 시작 시 곡괭이 비활성화
+            if (miningTool != null) miningTool.SetActive(false);
+        }
 
         void Update()
         {
@@ -26,6 +42,7 @@ namespace Hero
         /// </summary>
         void CheckForRocks()
         {
+            bool wasMining = isMining;
             isMining = false;
 
             // Physics.OverlapSphere를 사용하여 레이어로 필터링된 오브젝트들만 탐색 (성능 최적화)
@@ -37,6 +54,15 @@ namespace Hero
                 {
                     isMining = true;
                     break;
+                }
+            }
+
+            // 가시성 업데이트 (상태 변화가 있을 때만 처리해도 되지만 안정성을 위해 체크)
+            if (miningTool != null)
+            {
+                if (isMining != miningTool.activeSelf)
+                {
+                    miningTool.SetActive(isMining);
                 }
             }
         }

@@ -37,7 +37,7 @@ namespace Hero
             GetInput(); // 입력 받기
 
             // 입력이 거의 없으면 이동 로직 취소
-            if (Mathf.Abs(input.x) < 0.1 && Mathf.Abs(input.y) < 0.1) return;
+            if (Mathf.Abs(input.x) < 0.3 && Mathf.Abs(input.y) < 0.3) return;
 
             CalculateDirection(); // 이동 방향 계산
             Rotate();             // 캐릭터 회전

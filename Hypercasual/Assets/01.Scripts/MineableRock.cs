@@ -9,6 +9,9 @@ namespace Hero
     /// </summary>
     public class MineableRock : MonoBehaviour
     {
+        [Header("드랍 설정")]
+        public GameObject gemstonePrefab; // 채굴 시 생성될 젬스톤 프리팹
+
         private Vector3 originalScale; // 원래 크기 저장용
         public bool CanBeMined { get; private set; } = true; // 채굴 가능 여부
         private Collider col;
@@ -29,6 +32,20 @@ namespace Hero
             
             // 충돌 감지 비활성화
             if (col != null) col.enabled = false;
+
+            // 젬스톤 생성 요청 (PlayerStack에게 위임)
+            if (gemstonePrefab != null)
+            {
+                GameObject player = GameObject.FindGameObjectWithTag("Player");
+                if (player != null)
+                {
+                    Hero.PlayerStack stack = player.GetComponent<Hero.PlayerStack>();
+                    if (stack != null)
+                    {
+                        stack.AddToStack(gemstonePrefab);
+                    }
+                }
+            }
             
             // DOTween: 크기를 0으로 축소하며 사라짐
             transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack).OnComplete(() =>
