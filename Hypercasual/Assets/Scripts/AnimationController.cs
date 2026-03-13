@@ -17,11 +17,14 @@ public class AnimationController : MonoBehaviour
 
     void Update()
     {
+        bool mine = false;
+
         if (movement != null)
         {
             // 조이스틱이나 키보드 입력 크기가 0.5보다 크면 달리기 애니메이션 재생
             float mag = movement.input.magnitude;
             run = mag > 0.5f;
+            mine = movement.isMining;
         }
         else
         {
@@ -36,5 +39,6 @@ public class AnimationController : MonoBehaviour
         }
 
         anim.SetBool("Run", run);
+        anim.SetBool("IsMining", mine);
     }
 }

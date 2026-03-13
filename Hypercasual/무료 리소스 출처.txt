@@ -1,9 +1,23 @@
-1. 3D 캐릭터 모델
-
+3D 캐릭터 모델
 에셋명: Cube People - Demo
-
 제작자: Gesta2
+출처: https://assetstore.unity.com/packages/3d/characters/humanoids/humans/cube-people-demo-193803
+라이선스: Unity Asset Store 정식 무료 라이선스 (Standard Unity Asset Store EULA)
 
-출처: https://assetstore.unity.com/packages/3d/characters/humanoids/humans/cube-people-demo-193803?utm_medium=affiliate#publisher
+3D 프랍 (아이템 및 장애물) 모델
+에셋명: Free Mining Pack - Low Poly Ores, Gems, Tools & Props
+제작자: Pure Poly
+출처: https://assetstore.unity.com/packages/3d/props/free-mining-pack-low-poly-ores-gems-tools-props-189962
+라이선스: Unity Asset Store 정식 무료 라이선스 (Standard Unity Asset Store EULA)
 
+애니메이션 리소스
+에셋명: 애니메이션
+제작자: Adobe Mixamo
+출처: https://www.mixamo.com/
+라이선스: Mixamo Free License
+
+외부 라이브러리 및 플러그인
+에셋명: DOTween (HOTween v2)
+제작자: Demigiant
+출처: https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676
 라이선스: Unity Asset Store 정식 무료 라이선스 (Standard Unity Asset Store EULA)

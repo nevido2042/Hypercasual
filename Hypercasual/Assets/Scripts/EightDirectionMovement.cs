@@ -12,6 +12,9 @@ public class EightDirectionMovement : MonoBehaviour
     public Vector2 input;
     float angle;
 
+    [HideInInspector]
+    public bool isMining = false;
+
         Quaternion targetRotation;
         public Transform cam; // 카메라 트랜스폼
 
@@ -30,6 +33,7 @@ public class EightDirectionMovement : MonoBehaviour
         void Update()
         {
             GetInput();
+            CheckForRocks();
 
             if (Mathf.Abs(input.x) < 0.1 && Mathf.Abs(input.y) < 0.1) return;
 
@@ -80,5 +84,21 @@ public class EightDirectionMovement : MonoBehaviour
     {
         float speedMultiplier = Mathf.Clamp01(input.magnitude);
         transform.position += transform.forward * velocity * speedMultiplier * Time.deltaTime;
+    }
+
+    void CheckForRocks()
+    {
+        isMining = false;
+        // 주변 1.5 반경 내의 콜라이더 탐색
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 1.5f);
+        foreach (var hitCollider in hitColliders)
+        {
+            string objName = hitCollider.gameObject.name.ToLower();
+            if (objName.Contains("rock") || hitCollider.CompareTag("Rock"))
+            {
+                isMining = true;
+                break;
+            }
+        }
     }
 }
