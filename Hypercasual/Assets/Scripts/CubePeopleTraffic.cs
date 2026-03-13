@@ -3,26 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace CubePeople
+public class CubePeopleTraffic : MonoBehaviour
 {
-    public class CubePeopleTraffic : MonoBehaviour
-    {
         NavMeshAgent agent;
         public Vector2 minmaxSpeed = new Vector2(0.5f, 1.5f);
 
-        public int playerState = 0; //0=entry, 1=stay
+        public int playerState = 0; //0=진입, 1=머무름
         public bool refreshDestination = false;
         bool dice;
 
         public float pauseTime = 1;
         float timeCount;
 
-        //Way point
+        // 웨이포인트(경유지)
         public int targetPoint;
         public GameObject destinationFolder;
         List<Transform> wayPoints = new List<Transform>();
         
-        //anim
+        // 애니메이션
         Animator anim;
 
         void Start()
@@ -61,7 +59,7 @@ namespace CubePeople
                 float dist = Vector3.Distance(wayPoints[targetPoint].position, transform.position);
                 if (dist < 0.35f)
                 {
-                    //arrived
+                    // 도착함
                     if (!dice)
                     {
                         playerState = Random.Range(0, 2);
@@ -70,18 +68,18 @@ namespace CubePeople
 
                     if (playerState == 1)
                     {
-                        timeCount -= Time.deltaTime;    //wait
+                        timeCount -= Time.deltaTime;    // 대기
                         if (timeCount < 0)
                         {
                             timeCount = pauseTime;
                             dice = false;
-                            playerState = 0;    //return zero
+                            playerState = 0;    // 상태 초기화
                         }
                     }
                     else
                     {
                         if (dice) dice = false;
-                        targetPoint = RandomPoint();    //new point
+                        targetPoint = RandomPoint();    // 새로운 목표지점
                         refreshDestination = true;
                     }
                 }
@@ -106,9 +104,8 @@ namespace CubePeople
             return rPoint;
         }
 
-        public float RandomSpeed()
-        {
-            return Random.Range(minmaxSpeed.x, minmaxSpeed.y);
-        }
+    public float RandomSpeed()
+    {
+        return Random.Range(minmaxSpeed.x, minmaxSpeed.y);
     }
 }

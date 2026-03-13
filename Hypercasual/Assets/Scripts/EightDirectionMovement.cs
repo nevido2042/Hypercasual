@@ -2,25 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CubePeople
+public class EightDirectionMovement : MonoBehaviour
 {
-    public class EightDirectionMovement : MonoBehaviour
-    {
 
-        public float velocity = 5;
-        public float turnSpeed = 10;
+    public float velocity = 5;
+    public float turnSpeed = 10;
 
-        Vector2 input;
-        float angle;
+    [HideInInspector]
+    public Vector2 input;
+    float angle;
 
         Quaternion targetRotation;
-        public Transform cam; //Transform cam;
+        public Transform cam; // 카메라 트랜스폼
 
         FollowTarget ft;
 
         void Start()
         {
-            //cam = Camera.main.transform;
+            cam = Camera.main.transform;
             if (cam.GetComponent<FollowTarget>())
             {
                 ft = cam.GetComponent<FollowTarget>();
@@ -32,7 +31,7 @@ namespace CubePeople
         {
             GetInput();
 
-            if (Mathf.Abs(input.x) < 1 && Mathf.Abs(input.y) < 1) return;
+            if (Mathf.Abs(input.x) < 0.1 && Mathf.Abs(input.y) < 0.1) return;
 
             CalculateDirection();
             Rotate();
@@ -40,10 +39,20 @@ namespace CubePeople
 
         }
 
+        [HideInInspector]
+        public VirtualJoystick joystick;
+
         void GetInput()
         {
-            input.x = Input.GetAxisRaw("Horizontal");
-            input.y = Input.GetAxisRaw("Vertical");
+            if (joystick != null && joystick.inputVector != Vector2.zero)
+            {
+                input = joystick.inputVector;
+            }
+            else
+            {
+                input.x = Input.GetAxisRaw("Horizontal");
+                input.y = Input.GetAxisRaw("Vertical");
+            }
         }
 
         void CalculateDirection()
@@ -67,9 +76,9 @@ namespace CubePeople
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
         }
 
-        void Move()
-        {
-            transform.position += transform.forward * velocity * Time.deltaTime;
-        }
+    void Move()
+    {
+        float speedMultiplier = Mathf.Clamp01(input.magnitude);
+        transform.position += transform.forward * velocity * speedMultiplier * Time.deltaTime;
     }
 }

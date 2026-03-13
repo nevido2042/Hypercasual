@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CubePeople
+public class FollowTarget : MonoBehaviour
 {
-    public class FollowTarget : MonoBehaviour
-    {
 
         public Transform target;
         public Vector3 offsetPos;
@@ -13,7 +11,7 @@ namespace CubePeople
         public float turnSpeed = 10;
         public float smoothSpeed = 0.5f;
 
-        public bool camRotation;    //TODO : If activated during play, an error remains.
+        public bool camRotation;    //TODO: 플레이 중에 활성화하면 오류가 발생합니다.
 
         Quaternion targetRotation;
         Vector3 targetPos;
@@ -95,7 +93,7 @@ namespace CubePeople
             Vector3 targerOffsetPos = Quaternion.Euler(0, angle, 0) * offsetPos;
             float dist = Vector3.Distance(offsetPos, targerOffsetPos);
 
-            smoothRotating = true;
+            smoothRotating = true; // 부드러운 회전 시작
 
             while (dist > 0.02f)
             {
@@ -104,8 +102,7 @@ namespace CubePeople
                 yield return null;
             }
 
-            smoothRotating = false;
-            offsetPos = targerOffsetPos;
-        }
+        smoothRotating = false; // 부드러운 회전 종료
+        offsetPos = targerOffsetPos;
     }
 }
