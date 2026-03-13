@@ -13,7 +13,7 @@ namespace Hero
         public Transform stackPoint;        // 젬스톤이 쌓이기 시작할 위치
         public float verticalSpacing = 0.2f; // 젬스톤 간의 수직 간격
         private List<Transform> stackList = new List<Transform>();
-        private EightDirectionMovement movement;
+        private PlayerMovement movement;
         private Vector3 lastVelocity;
         private bool wasMoving = false;
         private Vector2 smoothInput;
@@ -25,7 +25,7 @@ namespace Hero
 
         void Start()
         {
-            movement = GetComponent<EightDirectionMovement>();
+            movement = GetComponent<PlayerMovement>();
             lastPosition = transform.position;
             
             if (stackPoint == null)

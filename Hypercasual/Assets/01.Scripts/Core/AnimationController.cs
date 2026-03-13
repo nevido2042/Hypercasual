@@ -8,13 +8,13 @@ namespace Hero
     public class AnimationController : MonoBehaviour
     {
         Animator anim;
-        EightDirectionMovement movement;
+        PlayerMovement movement;
         PlayerMining mining;
 
         void Start()
         {
             anim = GetComponent<Animator>();
-            movement = GetComponent<EightDirectionMovement>();
+            movement = GetComponent<PlayerMovement>();
             mining = GetComponent<PlayerMining>();
         }
 

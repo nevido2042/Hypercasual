@@ -5,7 +5,7 @@ namespace Hero
     /// <summary>
     /// 플레이어의 8방향 이동 및 회전 로직 (채광 기능 분리됨)
     /// </summary>
-    public class EightDirectionMovement : MonoBehaviour
+    public class PlayerMovement : MonoBehaviour
     {
         public float velocity = 5;      // 이동 속도
         public float turnSpeed = 10;    // 회전 속도
