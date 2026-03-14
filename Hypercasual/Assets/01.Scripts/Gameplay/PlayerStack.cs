@@ -137,5 +137,19 @@ namespace Hero
                 ft.Setup(spawnWorldPos, "MAX", Color.red);
             }
         }
+        /// <summary>
+        /// 스택의 가장 위에 있는 젬스톤을 제거하고 반환
+        /// </summary>
+        public Transform RemoveFromStack()
+        {
+            if (stackList.Count == 0) return null;
+
+            int lastIndex = stackList.Count - 1;
+            Transform lastGem = stackList[lastIndex];
+            stackList.RemoveAt(lastIndex);
+            
+            // 제거 후 부모 관계 해제는 호출한 쪽에서 처리 가능하도록 함
+            return lastGem;
+        }
     }
 }
