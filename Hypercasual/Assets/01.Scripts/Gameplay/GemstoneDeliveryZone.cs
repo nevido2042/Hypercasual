@@ -108,9 +108,13 @@ namespace Hero
             gem.SetParent(stackContainer);
             
             // DOTween으로 점프하듯 이동하는 연출
-            gem.DOLocalJump(targetLocalPos, 2f, 1, 0.3f).SetEase(Ease.OutQuad);
+            gem.DOLocalJump(targetLocalPos, 2f, 1, 0.3f).SetEase(Ease.OutQuad).OnComplete(() => {
+                // 적재가 완료된 시점에 커졌다 원래대로 돌아오는 연출 (Pop 효과)
+                gem.DOPunchScale(Vector3.one * 0.5f, 0.3f, 5, 1f);
+            });
             gem.DOLocalRotate(Vector3.zero, 0.3f);
         }
+
         private void SetMarkerColor(Color color)
         {
             if (markerMaterial != null)
@@ -121,6 +125,25 @@ namespace Hero
                 else
                     markerMaterial.color = color;
             }
+        }
+
+        /// <summary>
+        /// 구역에 쌓여있는 젬스톤이 있는지 확인
+        /// </summary>
+        public bool HasGem() => deliveredGems.Count > 0;
+
+        /// <summary>
+        /// 구역에서 젬스톤 하나를 소모하여 반환
+        /// </summary>
+        public Transform ConsumeGem()
+        {
+            if (deliveredGems.Count == 0) return null;
+
+            int lastIndex = deliveredGems.Count - 1;
+            Transform gem = deliveredGems[lastIndex];
+            deliveredGems.RemoveAt(lastIndex);
+            
+            return gem;
         }
     }
 }
