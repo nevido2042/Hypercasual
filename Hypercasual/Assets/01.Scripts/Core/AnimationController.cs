@@ -21,16 +21,20 @@ namespace Hero
         void Update()
         {
             // 1. 이동 상태에 따른 Run 파라미터 업데이트
-            if (movement != null)
+            if (movement != null && mining != null)
             {
                 float mag = movement.InputValue.magnitude;
-                anim.SetBool("Run", mag > 0.5f); // 입력 크기가 일정 이상일 때 달리기
+                // 드릴카에 실제로 탑승 중일 때만 뛰지 않고 가만히 서있음(Idle)
+                bool canRun = mag > 0.5f && !mining.IsBoardingDrillCar;
+                anim.SetBool("Run", canRun);
             }
 
             // 2. 채광 가능 여부에 따른 IsMining 파라미터 업데이트 (상체 레이어용)
+            // 드릴일 때는 채광 애니메이션(곡괭질)을 실행하지 않음
             if (mining != null)
             {
-                anim.SetBool("IsMining", mining.IsMining);
+                bool shouldAnimate = mining.IsMining && !mining.IsDrillUpgraded;
+                anim.SetBool("IsMining", shouldAnimate);
             }
         }
     }

@@ -16,8 +16,18 @@ namespace Hero
 
         [Header("채광 도구")]
         [SerializeField] private GameObject miningTool;        // 손에 들 곡괭이 오브젝트
+        [SerializeField] private GameObject drillPrefab;       // 업그레이드용 드릴 프리팹
+        [SerializeField] private GameObject drillCarPrefab;    // 업그레이드용 드릴카 프리팹
+        
         public bool IsMining => isMining;
+        public bool IsDrillUpgraded => upgradeTier >= 1; // 1단계 이상(드릴/드릴카) 여부
+        public int UpgradeTier => upgradeTier;           // 현재 업그레이드 티어
+        public bool IsBoardingDrillCar => upgradeTier == 2 && isMining; // 드릴카 실제 탑승 여부 extension.
+
         private bool isMining = false; // 현재 주변에 캘 바위가 있는지 상태
+        private int upgradeTier = 0;   // 0: 곡괭이, 1: 드릴, 2: 드릴카
+        private DrillHead drillInstance;      // 생성된 드릴 인스턴스 참조
+        private GameObject drillCarInstance;
 
         void Awake()
         {
@@ -56,13 +66,68 @@ namespace Hero
                 }
             }
 
-            // 가시성 업데이트 (상태 변화가 있을 때만 처리해도 되지만 안정성을 위해 체크)
-            if (miningTool != null)
+            // 가시성 업데이트
+            if (upgradeTier == 1)
             {
-                if (isMining != miningTool.activeSelf)
+                // 드릴 모드: 드릴 활성화 및 회전 제어
+                if (drillInstance != null)
                 {
-                    miningTool.SetActive(isMining);
+                    if (isMining != drillInstance.gameObject.activeSelf)
+                    {
+                        drillInstance.gameObject.SetActive(isMining);
+                    }
+                    drillInstance.SetActiveMining(isMining);
                 }
+                
+                // 곡괭이는 드릴 업그레이드 시 항상 꺼둠
+                if (miningTool != null && miningTool.activeSelf) miningTool.SetActive(false);
+            }
+            else if (upgradeTier == 2)
+            {
+                // 드릴카 모드: 주변에 캘 바위가 있을 때만 차량이 나타나고 탑승함
+                if (drillCarInstance != null)
+                {
+                    if (isMining != drillCarInstance.activeSelf)
+                    {
+                        drillCarInstance.SetActive(isMining);
+                        UpdateCharacterPositionForCar(isMining);
+                    }
+                }
+                
+                // 곡괭이는 항상 꺼둠
+                if (miningTool != null && miningTool.activeSelf) miningTool.SetActive(false);
+            }
+            else
+            {
+                // 곡괭이 모드
+                if (miningTool != null)
+                {
+                    if (isMining != miningTool.activeSelf)
+                    {
+                        miningTool.SetActive(isMining);
+                    }
+                }
+            }
+        }
+
+        private void UpdateCharacterPositionForCar(bool boarding)
+        {
+            Transform characterRoot = transform.Find("Bip001");
+            if (characterRoot == null) characterRoot = transform.FindDeepChild("Bip001");
+            
+            if (characterRoot != null)
+            {
+                if (boarding)
+                {
+                    // 드릴카 의자 위치 (약간 높게, 뒤쪽으로)
+                    characterRoot.localPosition = new Vector3(0, 1.5f, -0.6f);
+                }
+                else
+                {
+                    // 원래 위치 (지면)
+                    characterRoot.localPosition = Vector3.zero;
+                }
+                characterRoot.localRotation = Quaternion.identity;
             }
         }
 
@@ -71,6 +136,9 @@ namespace Hero
         /// </summary>
         public void PerformMiningHit()
         {
+            // 드릴/드릴카 업그레이드 완료 후에는 DrillHead가 직접 채굴하므로 무시함
+            if (upgradeTier >= 1) return;
+
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, miningRange, rockLayer);
             List<MineableRock> rocksInRange = new List<MineableRock>();
 
@@ -89,32 +157,105 @@ namespace Hero
                 Vector3.Distance(transform.position, a.transform.position).CompareTo(
                 Vector3.Distance(transform.position, b.transform.position)));
 
-            // maxMineTargets 수만큼 순차적으로 채광 처리 (드릴 등 광역 도구 대응)
+            // maxMineTargets 수만큼 순차적으로 채광 처리
             int minedCount = 0;
             foreach (var rock in rocksInRange)
             {
                 if (minedCount >= maxMineTargets) break;
                 
-                rock.Mine(); // 바위 채굴 실행 (연출 실행)
+                rock.Mine(); // 바위 채굴 실행
                 minedCount++;
             }
         }
 
         /// <summary>
-        /// 채광 능력 업그레이드
+        /// 채광 능력 업그레이드 (티어별 확장)
         /// </summary>
         public void UpgradeMining()
         {
-            maxMineTargets++;
-            miningRange += 0.2f; // 업그레이드 시 사거리도 약간 증가
+            upgradeTier++;
             
-            // 시각적 피드백 (곡괭이 잠깐 커짐)
-            if (miningTool != null)
+            if (upgradeTier == 1)
+            {
+                CreateDrill();
+            }
+            else if (upgradeTier == 2)
+            {
+                CreateDrillCar();
+            }
+
+            maxMineTargets += 2; // 티어 상승 시 타격 대상 크게 증가
+            miningRange += 0.5f; // 사거리 증가
+            
+            // 시각적 피드백
+            if (upgradeTier == 1 && drillInstance != null)
+            {
+                drillInstance.transform.DOPunchScale(Vector3.one * 0.5f, 0.5f);
+            }
+            else if (upgradeTier == 2 && drillCarInstance != null)
+            {
+                drillCarInstance.transform.DOPunchScale(Vector3.one * 0.3f, 0.5f);
+            }
+            else if (miningTool != null)
             {
                 miningTool.transform.DOPunchScale(Vector3.one * 0.5f, 0.5f);
             }
             
-            Debug.Log($"[PlayerMining] Upgraded! MaxTargets: {maxMineTargets}, Range: {miningRange}");
+            Debug.Log($"[PlayerMining] Upgraded to Tier {upgradeTier}! MaxTargets: {maxMineTargets}, Range: {miningRange}");
+        }
+
+        private void CreateDrill()
+        {
+            if (drillPrefab == null)
+            {
+                Debug.LogWarning("[PlayerMining] Drill Prefab is missing!");
+                return;
+            }
+
+            // 곡괭이 비활성화
+            if (miningTool != null) miningTool.SetActive(false);
+
+            // 플레이어 앞에 드릴 생성
+            GameObject drillObj = Instantiate(drillPrefab, transform);
+            // 위치 설정 (플레이어 앞 약 0.5m, 높이는 허리 정도)
+            drillObj.transform.localPosition = new Vector3(0, 0.8f, 0.8f);
+            drillObj.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            
+            drillInstance = drillObj.GetComponent<DrillHead>();
+            if (drillInstance == null) drillInstance = drillObj.AddComponent<DrillHead>();
+
+            // 레이어 정보 전달
+            drillInstance.SetTargetLayer(rockLayer);
+
+            drillObj.SetActive(false);
+        }
+
+        private void CreateDrillCar()
+        {
+            if (drillCarPrefab == null)
+            {
+                Debug.LogWarning("[PlayerMining] DrillCar Prefab is missing!");
+                return;
+            }
+
+            // 기존 드릴 제거
+            if (drillInstance != null) Destroy(drillInstance.gameObject);
+
+            // 드릴카 생성 (플레이어의 자식으로 설정하여 함께 이동)
+            drillCarInstance = Instantiate(drillCarPrefab, transform);
+            // 차량이 땅에 묻히지 않도록 높이 조절
+            drillCarInstance.transform.localPosition = new Vector3(0, 0.4f, 0); 
+            drillCarInstance.transform.localRotation = Quaternion.identity;
+
+            // 드릴카의 DrillHead 설정
+            DrillHead carDrill = drillCarInstance.GetComponentInChildren<DrillHead>();
+            if (carDrill == null) carDrill = drillCarInstance.AddComponent<DrillHead>();
+            
+            carDrill.SetTargetLayer(rockLayer);
+            carDrill.SetActiveMining(true); 
+
+            // 초기 상태는 비활성화 (바위 있을 때만 나타남)
+            drillCarInstance.SetActive(false);
         }
     }
 }
