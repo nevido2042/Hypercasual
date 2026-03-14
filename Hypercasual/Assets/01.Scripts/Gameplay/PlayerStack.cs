@@ -19,6 +19,14 @@ namespace Hero
         private Vector2 smoothInput;
         public float tiltSensitivity = 2f; // 이동 시 기울어지는 감도
 
+        [Header("적재 제한")]
+        public int maxCapacity = 10; // 최대 적재 수량
+        public GameObject maxTextPrefab; // "Max" 텍스트 프리팹
+
+        private float nextMaxTextTime = 0f;
+        private const float MAX_TEXT_COOLDOWN = 0.5f;
+
+        private Canvas cachedCanvas;
         private Vector3 lastPosition;
         private Vector3 currentVelocity;
         private Vector2 smoothLean;
@@ -27,6 +35,8 @@ namespace Hero
         {
             movement = GetComponent<PlayerMovement>();
             lastPosition = transform.position;
+            cachedCanvas = FindFirstObjectByType<Canvas>();
+            cachedCanvas = FindFirstObjectByType<Canvas>();
             
             if (stackPoint == null)
             {
@@ -80,6 +90,18 @@ namespace Hero
 
         public void AddToStack(GameObject gemstonePrefab)
         {
+            // 최대 수량 제한 확인
+            if (stackList.Count >= maxCapacity)
+            {
+                if (Time.time >= nextMaxTextTime)
+                {
+                    nextMaxTextTime = Time.time + MAX_TEXT_COOLDOWN;
+                    ShowMaxText();
+                }
+                Debug.Log("Stack is full! Cannot add more gemstones.");
+                return;
+            }
+
             Transform parent = stackList.Count == 0 ? stackPoint : stackList[stackList.Count - 1];
             Vector3 targetLocalPos = stackList.Count == 0 ? Vector3.zero : new Vector3(0, verticalSpacing, 0);
 
@@ -89,9 +111,31 @@ namespace Hero
 
             gemstone.AttachToStack(parent, targetLocalPos, () => {
                 stackList.Add(gemstone.transform);
+                
+                // 팝업 애니메이션: 0에서 시작해서 살짝 커졌다가(1.2) 원래 크기(1.0)로 돌아옴
                 gemstone.transform.localScale = Vector3.zero;
-                gemstone.transform.DOScale(Vector3.one, 0.2f).SetEase(Ease.OutBack);
+                Sequence seq = DOTween.Sequence();
+                seq.Append(gemstone.transform.DOScale(1.2f, 0.15f).SetEase(Ease.OutQuad));
+                seq.Append(gemstone.transform.DOScale(1.0f, 0.1f).SetEase(Ease.InQuad));
             });
+        }
+
+        private void ShowMaxText()
+        {
+            if (maxTextPrefab != null)
+            {
+                // 캐싱된 캔버스 사용 (리소스 조사 비용 절감)
+                if (cachedCanvas == null) cachedCanvas = FindFirstObjectByType<Canvas>();
+                if (cachedCanvas == null) return;
+
+                Vector3 spawnWorldPos = transform.position + Vector3.up * 2.5f;
+                GameObject go = EffectManager.Instance.Spawn(maxTextPrefab, spawnWorldPos, Quaternion.identity, cachedCanvas.transform);
+                
+                FloatingText ft = go.GetComponent<FloatingText>();
+                if (ft == null) ft = go.AddComponent<FloatingText>();
+                
+                ft.Setup(spawnWorldPos, "MAX", Color.red);
+            }
         }
     }
 }

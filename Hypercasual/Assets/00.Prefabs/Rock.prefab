@@ -120,3 +120,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gemstonePrefab: {fileID: 6761840101079759164, guid: a1ecfbe2a8219f041887c42fe9695d69, type: 3}
+  hitParticlePrefab: {fileID: 1921325125401358, guid: 82c51bb9c63638f4fb43d84dab469014, type: 3}

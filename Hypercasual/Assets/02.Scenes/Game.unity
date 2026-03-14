@@ -1403,7 +1403,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stackPoint: {fileID: 0}
   verticalSpacing: 0.2
-  wobbleIntensity: 10
+  tiltSensitivity: 5
 --- !u!1 &687235709559417404 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7033575592763522584, guid: feba5822b5d4a15418f7dbb469e3bbb3, type: 3}

@@ -1,3 +1,5 @@
+에셋 및 리소스 출처 목록
+
 3D 캐릭터 모델
 에셋명: Cube People - Demo
 제작자: Gesta2
@@ -15,6 +17,12 @@
 제작자: Adobe Mixamo
 출처: https://www.mixamo.com/
 라이선스: Mixamo Free License
+
+VFX (파티클) 리소스
+에셋명: Polygonal's Low-Poly Particle Pack
+제작자: Polygonal Stuff
+출처: https://assetstore.unity.com/packages/vfx/particles/polygonal-s-low-poly-particle-pack-118355
+라이선스: Unity Asset Store 정식 무료 라이선스 (Standard Unity Asset Store EULA)
 
 외부 라이브러리 및 플러그인
 에셋명: DOTween (HOTween v2)
