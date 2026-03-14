@@ -18,6 +18,9 @@ namespace Hero
 
         private List<Transform> consumedProducts = new List<Transform>();
         private float nextDistributeTime = 0f;
+        private bool isPlayerInDeliveryZone = false; // 플레이어 존재 여부
+
+        public void SetPlayerInDeliveryZone(bool isInRange) => isPlayerInDeliveryZone = isInRange;
 
         void Awake()
         {
@@ -38,8 +41,8 @@ namespace Hero
 
         void Update()
         {
-            // 대기열의 죄수에게 아이템 배달
-            if (queueManager != null && !queueManager.IsQueueEmpty)
+            // 플레이어가 구역 안에 있을 때만 대기열의 죄수에게 아이템 배달
+            if (isPlayerInDeliveryZone && queueManager != null && !queueManager.IsQueueEmpty)
             {
                 // 적재된 아이템이 있을 때만 로직 수행
                 if (consumedProducts.Count > 0 && Time.time >= nextDistributeTime)

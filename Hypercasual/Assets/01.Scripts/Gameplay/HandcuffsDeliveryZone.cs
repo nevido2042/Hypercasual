@@ -10,15 +10,15 @@ namespace Hero
     public class HandcuffsDeliveryZone : MonoBehaviour
     {
         [Header("Target")]
-        public HandcuffsConsumeZone consumeZone; // 실제로 수갑이 쌓일 구역
+        [SerializeField] private HandcuffsConsumeZone consumeZone; // 실제로 수갑이 쌓일 구역
 
         [Header("Settings")]
-        public float receiveInterval = 0.15f;
+        [SerializeField] private float receiveInterval = 0.15f;
         
         [Header("Visuals")]
-        public MeshRenderer markerRenderer;
-        public Color activeColor = Color.yellow;
-        public Color inactiveColor = Color.gray;
+        [SerializeField] private MeshRenderer markerRenderer;
+        [SerializeField] private Color activeColor = Color.yellow;
+        [SerializeField] private Color inactiveColor = Color.gray;
 
         private Coroutine consumeCoroutine;
         private PlayerStack playerStack;
@@ -41,6 +41,10 @@ namespace Hero
                 if (playerStack != null)
                 {
                     SetColor(activeColor);
+
+                    // ConsumeZone에 플레이어 도착 알림
+                    if (consumeZone != null) consumeZone.SetPlayerInDeliveryZone(true);
+
                     if (consumeCoroutine != null) StopCoroutine(consumeCoroutine);
                     consumeCoroutine = StartCoroutine(ConsumeRoutine());
                 }
@@ -52,6 +56,10 @@ namespace Hero
             if (other.CompareTag("Player"))
             {
                 SetColor(inactiveColor);
+
+                // ConsumeZone에 플레이어 퇴장 알림
+                if (consumeZone != null) consumeZone.SetPlayerInDeliveryZone(false);
+
                 if (consumeCoroutine != null)
                 {
                     StopCoroutine(consumeCoroutine);

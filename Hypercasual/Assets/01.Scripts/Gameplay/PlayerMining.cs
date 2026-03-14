@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using DG.Tweening;
 
 namespace Hero
 {
@@ -16,7 +17,7 @@ namespace Hero
         [Header("채광 도구")]
         [SerializeField] private GameObject miningTool;        // 손에 들 곡괭이 오브젝트
         public bool IsMining => isMining;
-        private bool isMining = false; // 현재 주변에 캘 바위가 있는지 상태 extension.
+        private bool isMining = false; // 현재 주변에 캘 바위가 있는지 상태
 
         void Awake()
         {
@@ -41,7 +42,6 @@ namespace Hero
         /// </summary>
         void CheckForRocks()
         {
-            bool wasMining = isMining;
             isMining = false;
 
             // Physics.OverlapSphere를 사용하여 레이어로 필터링된 오브젝트들만 탐색 (성능 최적화)
@@ -98,6 +98,23 @@ namespace Hero
                 rock.Mine(); // 바위 채굴 실행 (연출 실행)
                 minedCount++;
             }
+        }
+
+        /// <summary>
+        /// 채광 능력 업그레이드
+        /// </summary>
+        public void UpgradeMining()
+        {
+            maxMineTargets++;
+            miningRange += 0.2f; // 업그레이드 시 사거리도 약간 증가
+            
+            // 시각적 피드백 (곡괭이 잠깐 커짐)
+            if (miningTool != null)
+            {
+                miningTool.transform.DOPunchScale(Vector3.one * 0.5f, 0.5f);
+            }
+            
+            Debug.Log($"[PlayerMining] Upgraded! MaxTargets: {maxMineTargets}, Range: {miningRange}");
         }
     }
 }
