@@ -72,5 +72,37 @@ namespace Hero
             });
             cash.DOLocalRotate(Vector3.zero, 0.4f);
         }
+
+        private void OnTriggerStay(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                PlayerStack player = other.GetComponent<PlayerStack>();
+                if (player != null && stackedCash.Count > 0)
+                {
+                    // 수집 속도 조절
+                    if (Time.frameCount % 5 == 0)
+                    {
+                        Transform cash = ConsumeCash();
+                        if (cash != null)
+                        {
+                            player.AddToMoneyStack(cash);
+                        }
+                    }
+                }
+            }
+        }
+
+        private Transform ConsumeCash()
+        {
+            if (stackedCash.Count == 0) return null;
+
+            int lastIndex = stackedCash.Count - 1;
+            Transform cash = stackedCash[lastIndex];
+            stackedCash.RemoveAt(lastIndex);
+
+            cash.DOKill();
+            return cash;
+        }
     }
 }
