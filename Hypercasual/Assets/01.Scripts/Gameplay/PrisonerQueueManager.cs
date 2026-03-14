@@ -13,6 +13,9 @@ namespace Hero
         public float spacing = 1.8f;
         public int maxQueueSize = 5;
 
+        [Header("Path Settings")]
+        public List<Transform> exitWaypoints = new List<Transform>();
+
         private List<Prisoner> waitingPrisoners = new List<Prisoner>();
 
         public bool IsQueueEmpty => waitingPrisoners.Count == 0;
