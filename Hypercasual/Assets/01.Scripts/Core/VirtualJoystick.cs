@@ -10,9 +10,9 @@ namespace Hero
     public class VirtualJoystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
         [Header("UI 참조")]
-        public RectTransform TouchZone;      // 터치 인식 영역
-        public RectTransform JoystickVisual; // 조이스틱 배경 시각 요소
-        public RectTransform HandleVisual;   // 조이스틱 핸들 시각 요소
+        [SerializeField] private RectTransform TouchZone;      // 터치 인식 영역
+        [SerializeField] private RectTransform JoystickVisual; // 조이스틱 배경 시각 요소
+        [SerializeField] private RectTransform HandleVisual;   // 조이스틱 핸들 시각 요소
 
         [HideInInspector]
         public Vector2 inputVector; // 캐릭터 이동에 사용할 입력 벡터

@@ -10,15 +10,15 @@ namespace Hero
     public class MachineController : MonoBehaviour
     {
         [Header("References")]
-        public GemstoneDeliveryZone inputZone;   // 젬스톤을 가져올 구역
-        public HandcuffsStackZone outputZone;   // 제품을 보낼 구역
-        public GameObject productPrefab;         // 생산할 제품 프리팹 (수갑)
-        public Transform inputPoint;              // 젬스톤이 머신으로 들어가는 입구
-        public Transform outputPoint;             // 제품이 튀어나오는 출구
+        [SerializeField] private GemstoneDeliveryZone inputZone;   // 젬스톤을 가져올 구역
+        [SerializeField] private HandcuffsStackZone outputZone;   // 제품을 보낼 구역
+        [SerializeField] private GameObject productPrefab;         // 생산할 제품 프리팹 (수갑)
+        [SerializeField] private Transform inputPoint;              // 젬스톤이 머신으로 들어가는 입구
+        [SerializeField] private Transform outputPoint;             // 제품이 튀어나오는 출구
 
         [Header("Production Settings")]
-        public float productionTime = 1.5f;       // 생산 소요 시간
-        public float checkInterval = 0.5f;        // 젬스톤 유무 확인 간격
+        [SerializeField] private float productionTime = 1.5f;       // 생산 소요 시간
+        [SerializeField] private float checkInterval = 0.5f;        // 젬스톤 유무 확인 간격
 
         private bool isWorking = false;
 

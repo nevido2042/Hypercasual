@@ -11,15 +11,15 @@ namespace Hero
     public class GemstoneDeliveryZone : MonoBehaviour
     {
         [Header("Settings")]
-        public float unloadInterval = 0.1f;    // 젬스톤 전달 간격
-        public float stackSpacing = 0.5f;     // 가로 간격 (2줄 사이)
-        public float stackHeight = 0.2f;      // 세로 높이 간격
-        public Transform stackContainer;      // 젬스톤이 쌓일 부모 오브젝트
+        [SerializeField] private float unloadInterval = 0.1f;    // 젬스톤 전달 간격
+        [SerializeField] private float stackSpacing = 0.5f;     // 가로 간격 (2줄 사이)
+        [SerializeField] private float stackHeight = 0.2f;      // 세로 높이 간격
+        [SerializeField] private Transform stackContainer;      // 젬스톤이 쌓일 부모 오브젝트
 
         [Header("Visuals")]
-        public MeshRenderer markerRenderer;   // 구역 마커 렌더러
-        public Color activeColor = Color.green;
-        public Color inactiveColor = Color.blue;
+        [SerializeField] private MeshRenderer markerRenderer;   // 구역 마커 렌더러
+        [SerializeField] private Color activeColor = Color.green;
+        [SerializeField] private Color inactiveColor = Color.blue;
 
         private List<Transform> deliveredGems = new List<Transform>();
         private Coroutine unloadCoroutine;

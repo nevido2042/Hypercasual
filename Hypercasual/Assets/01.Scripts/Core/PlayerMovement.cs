@@ -7,20 +7,20 @@ namespace Hero
     /// </summary>
     public class PlayerMovement : MonoBehaviour
     {
-        public float velocity = 5;      // 이동 속도
-        public float turnSpeed = 10;    // 회전 속도
+        [SerializeField] private float velocity = 5;      // 이동 속도
+        [SerializeField] private float turnSpeed = 10;    // 회전 속도
 
-        [HideInInspector]
-        public Vector2 input;           // 입력값 (조이스틱 또는 키보드)
-        float angle;                    // 목표 회전 각도
+        public Vector2 InputValue => input;              // 외부 노출용 프로퍼티
+        private Vector2 input;                           // 입력값 (조이스틱 또는 키보드)
+        private float angle;                             // 목표 회전 각도
 
-        Quaternion targetRotation;      // 목표 회전값
-        public Transform cam;           // 카메라 참조
+        private Quaternion targetRotation;               // 목표 회전값
+        [SerializeField] private Transform cam;           // 카메라 참조
 
         FollowTarget ft;               // 카메라 팔로우 스크립트 참조
 
         [HideInInspector]
-        public VirtualJoystick joystick; // 조이스틱 인터페이스 참조
+        [SerializeField] private VirtualJoystick joystick; // 조이스틱 인터페이스 참조
 
         void Start()
         {
@@ -75,7 +75,7 @@ namespace Hero
         /// </summary>
         void Rotate()
         {
-            if (ft != null && ft.camRotation)
+            if (ft != null && ft.CamRotation)
             {
                 // 카메라 회전 방식이 활성화된 경우의 예외 처리
                 transform.rotation = Quaternion.Euler(0, input.x * 1.5f, 0) * transform.rotation;

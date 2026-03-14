@@ -10,9 +10,9 @@ namespace Hero
     public class HandcuffsStackZone : MonoBehaviour
     {
         [Header("Settings")]
-        public float stackHeight = 0.2f;      // 수직 간격
-        public Transform stackContainer;      // 부모 오브젝트
-        public float arrivalSpeed = 5.0f;     // 제품 이동 속도
+        [SerializeField] private float stackHeight = 0.2f;      // 수직 간격
+        [SerializeField] private Transform stackContainer;      // 부모 오브젝트
+        [SerializeField] private float arrivalSpeed = 5.0f;     // 제품 이동 속도
 
         private List<Transform> stackedProducts = new List<Transform>();
 

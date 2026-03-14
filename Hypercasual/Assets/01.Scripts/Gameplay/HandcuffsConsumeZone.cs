@@ -11,10 +11,10 @@ namespace Hero
     public class HandcuffsConsumeZone : MonoBehaviour
     {
         [Header("Settings")]
-        public float stackHeight = 0.2f;
-        public Transform stackContainer;
-        public PrisonerQueueManager queueManager;
-        public float distributeInterval = 0.5f;
+        [SerializeField] private float stackHeight = 0.2f;
+        [SerializeField] private Transform stackContainer;
+        [SerializeField] private PrisonerQueueManager queueManager;
+        [SerializeField] private float distributeInterval = 0.5f;
 
         private List<Transform> consumedProducts = new List<Transform>();
         private float nextDistributeTime = 0f;

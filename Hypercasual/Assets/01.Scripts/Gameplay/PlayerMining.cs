@@ -9,15 +9,14 @@ namespace Hero
     public class PlayerMining : MonoBehaviour
     {
         [Header("채광 스탯")]
-        public float miningRange = 1.5f;     // 바위 탐색 및 타격 사거리
-        public int maxMineTargets = 1;       // 한 번에 타격 가능한 최대 목표 수 (업그레이드용)
-        public LayerMask rockLayer;          // 바위 오브젝트들이 속한 물리 레이어
+        [SerializeField] private float miningRange = 1.5f;     // 바위 탐색 및 타격 사거리
+        [SerializeField] private int maxMineTargets = 1;       // 한 번에 타격 가능한 최대 목표 수 (업그레이드용)
+        [SerializeField] private LayerMask rockLayer;          // 바위 오브젝트들이 속한 물리 레이어
 
         [Header("채광 도구")]
-        public GameObject miningTool;        // 손에 들 곡괭이 오브젝트
-
-        [HideInInspector]
-        public bool isMining = false;        // 현재 주변에 캘 바위가 있는지 상태
+        [SerializeField] private GameObject miningTool;        // 손에 들 곡괭이 오브젝트
+        public bool IsMining => isMining;
+        private bool isMining = false; // 현재 주변에 캘 바위가 있는지 상태 extension.
 
         void Awake()
         {

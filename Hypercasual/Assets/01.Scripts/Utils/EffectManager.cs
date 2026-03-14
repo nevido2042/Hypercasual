@@ -59,10 +59,10 @@ namespace Hero
             spawnedObj.transform.SetParent(parent);
 
             // 풀로 되돌려주기 위한 정보 설정 (컴포넌트가 있다면)
-            var returnToPool = spawnedObj.GetComponent<ReturnToPool>();
-            if (returnToPool == null) returnToPool = spawnedObj.AddComponent<ReturnToPool>();
+            var returnToPoolComp = spawnedObj.GetComponent<ReturnToPool>();
+            if (returnToPoolComp == null) returnToPoolComp = spawnedObj.AddComponent<ReturnToPool>();
             
-            returnToPool.Setup(poolDictionary[key]);
+            returnToPoolComp.Setup(poolDictionary[key]);
 
             return spawnedObj;
         }

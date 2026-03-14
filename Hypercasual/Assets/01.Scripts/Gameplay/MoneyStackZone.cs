@@ -11,7 +11,7 @@ namespace Hero
     public class MoneyStackZone : MonoBehaviour
     {
         [Header("Prefab")]
-        public GameObject cashPrefab;
+        [SerializeField] private GameObject cashPrefab;
 
         [Header("Grid Settings")]
         public int columns = 2;              // 가로 줄 수 (2열)

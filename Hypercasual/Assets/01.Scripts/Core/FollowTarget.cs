@@ -7,13 +7,14 @@ namespace Hero
     /// </summary>
     public class FollowTarget : MonoBehaviour
     {
-        public Transform target;        // 따라갈 대상
-        public Vector3 offsetPos;       // 대상과의 거리 간격
-        public float moveSpeed = 5;     // 위치 이동 속도
-        public float turnSpeed = 10;    // 회전 속도
-        public float smoothSpeed = 0.5f; // 부드러운 전환 속도
+        [SerializeField] private Transform target;        // 따라갈 대상
+        [SerializeField] private Vector3 offsetPos;       // 대상과의 거리 간격
+        [SerializeField] private float moveSpeed = 5;     // 위치 이동 속도
+        [SerializeField] private float turnSpeed = 10;    // 회전 속도
+        [SerializeField] private float smoothSpeed = 0.5f; // 부드러운 전환 속도
 
-        public bool camRotation;        // 카메라 회전 모드 여부
+        public bool CamRotation => camRotation;        // 외부 노출용 프로퍼티
+        [SerializeField] private bool camRotation;        // 카메라 회전 모드 여부
 
         Quaternion targetRotation;
         Vector3 targetPos;

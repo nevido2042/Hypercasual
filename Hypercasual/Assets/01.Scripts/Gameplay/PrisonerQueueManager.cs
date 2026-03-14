@@ -9,12 +9,13 @@ namespace Hero
     public class PrisonerQueueManager : MonoBehaviour
     {
         [Header("Queue Settings")]
-        public Transform queueStartPoint;
-        public float spacing = 1.8f;
-        public int maxQueueSize = 5;
+        [SerializeField] private Transform queueStartPoint;
+        [SerializeField] private float spacing = 1.8f;
+        [SerializeField] private int maxQueueSize = 5;
 
+        public IReadOnlyList<Transform> ExitWaypoints => exitWaypoints;
         [Header("Path Settings")]
-        public List<Transform> exitWaypoints = new List<Transform>();
+        [SerializeField] private List<Transform> exitWaypoints = new List<Transform>();
 
         private List<Prisoner> waitingPrisoners = new List<Prisoner>();
 

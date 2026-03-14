@@ -10,10 +10,10 @@ namespace Hero
     public class MineableRock : MonoBehaviour
     {
         [Header("드랍 설정")]
-        public GameObject gemstonePrefab; // 채굴 시 생성될 젬스톤 프리팹
+        [SerializeField] private GameObject gemstonePrefab; // 채굴 시 생성될 젬스톤 프리팹
 
         [Header("파티클 설정")]
-        public GameObject hitParticlePrefab; // 여기에 HitRock02 프리팹을 할당하세요
+        [SerializeField] private GameObject hitParticlePrefab; // 여기에 HitRock02 프리팹을 할당하세요
 
         private Vector3 originalScale; // 원래 크기 저장용
         public bool CanBeMined { get; private set; } = true; // 채굴 가능 여부

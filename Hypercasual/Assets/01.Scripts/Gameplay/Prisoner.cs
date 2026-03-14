@@ -12,16 +12,18 @@ namespace Hero
     public class Prisoner : MonoBehaviour
     {
         [Header("Settings")]
-        public int minRequired = 1;
-        public int maxRequired = 5;
-        public float moveSpeed = 5f;
+        [SerializeField] private int minRequired = 1;
+        [SerializeField] private int maxRequired = 5;
+        [SerializeField] private float moveSpeed = 5f;
 
         [Header("Animations")]
-        public Animator animator;
+        [SerializeField] private Animator animator;
         private static readonly int HashWalk = Animator.StringToHash("Walk");
 
-        [HideInInspector] public int requiredHandcuffs;
-        [HideInInspector] public int currentHandcuffs = 0;
+        public int RequiredHandcuffs => requiredHandcuffs; 
+        private int requiredHandcuffs;
+        public int CurrentHandcuffs => currentHandcuffs;
+        private int currentHandcuffs = 0;
         
         private Rigidbody rb;
         private CapsuleCollider col;
@@ -180,16 +182,16 @@ namespace Hero
 
             // 매니저로부터 퇴장 경로 웨이포인트 가져오기
             PrisonerQueueManager manager = Object.FindFirstObjectByType<PrisonerQueueManager>();
-            if (manager != null && manager.exitWaypoints != null)
+            if (manager != null && manager.ExitWaypoints != null)
             {
-                for (int i = 0; i < manager.exitWaypoints.Count; i++)
+                for (int i = 0; i < manager.ExitWaypoints.Count; i++)
                 {
-                    Transform wp = manager.exitWaypoints[i];
+                    Transform wp = manager.ExitWaypoints[i];
                     if (wp == null) continue;
 
                     Vector3 pos = wp.position;
                     // 마지막 웨이포인트(감옥 안)라면 약간의 랜덤 오프셋 추가
-                    if (i == manager.exitWaypoints.Count - 1)
+                    if (i == manager.ExitWaypoints.Count - 1)
                     {
                         pos += new Vector3(Random.Range(-1.5f, 1.5f), 0, Random.Range(-1.5f, 1.5f));
                     }

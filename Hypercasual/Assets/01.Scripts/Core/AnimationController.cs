@@ -23,14 +23,14 @@ namespace Hero
             // 1. 이동 상태에 따른 Run 파라미터 업데이트
             if (movement != null)
             {
-                float mag = movement.input.magnitude;
+                float mag = movement.InputValue.magnitude;
                 anim.SetBool("Run", mag > 0.5f); // 입력 크기가 일정 이상일 때 달리기
             }
 
             // 2. 채광 가능 여부에 따른 IsMining 파라미터 업데이트 (상체 레이어용)
             if (mining != null)
             {
-                anim.SetBool("IsMining", mining.isMining);
+                anim.SetBool("IsMining", mining.IsMining);
             }
         }
     }
