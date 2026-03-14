@@ -9,6 +9,12 @@
 출처: https://assetstore.unity.com/packages/3d/characters/humanoids/humans/police-officers-with-props-v2-0-236153
 라이선스: Unity Asset Store 정식 무료 라이선스 (Standard Unity Asset Store EULA)
 
+3D 배경 (환경 및 던전) 모델
+에셋명: Too Many Items: Dungeon Kit
+제작자: TXMSKA
+출처: https://assetstore.unity.com/packages/3d/environments/dungeons/too-many-items-dungeon-kit-128219
+라이선스: Unity Asset Store 정식 무료 라이선스 (Standard Unity Asset Store EULA)
+
 3D 프랍 (아이템 및 장애물) 모델
 에셋명: Free Mining Pack - Low Poly Ores, Gems, Tools & Props
 제작자: Pure Poly

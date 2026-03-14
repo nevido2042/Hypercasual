@@ -7,7 +7,7 @@ namespace Hero
     /// <summary>
     /// 컨베이어 끝에서 수압(Handcuffs)을 전달받아 한 줄로 쌓는 구역
     /// </summary>
-    public class ProductDeliveryZone : MonoBehaviour
+    public class HandcuffsStackZone : MonoBehaviour
     {
         [Header("Settings")]
         public float stackHeight = 0.2f;      // 수직 간격
@@ -55,6 +55,40 @@ namespace Hero
                 product.DOPunchScale(Vector3.one * 2f, 0.3f, 5, 1f);
             });
             product.DOLocalRotate(Vector3.zero, 0.2f);
+        }
+        private void OnTriggerStay(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                PlayerStack player = other.GetComponent<PlayerStack>();
+                if (player != null && stackedProducts.Count > 0)
+                {
+                    // 일정 간격으로 전달 (여기서는 단순하게 매 프레임 체크 대신 젬스톤 배달 로직과 유사하게 처리 가능하지만 일단 단순 구현)
+                    // 현재는 테스트를 위해 즉시 전달 로직 (필요시 Interval 추가 가능)
+                    if (Time.frameCount % 10 == 0) // 속도 조절
+                    {
+                        Transform product = ConsumeProduct();
+                        if (product != null)
+                        {
+                            player.AddToFrontStack(product);
+                        }
+                    }
+                }
+            }
+        }
+
+        private Transform ConsumeProduct()
+        {
+            if (stackedProducts.Count == 0) return null;
+
+            int lastIndex = stackedProducts.Count - 1;
+            Transform product = stackedProducts[lastIndex];
+            stackedProducts.RemoveAt(lastIndex);
+
+            // 유휴 애니메이션 중지 (Kill tweens)
+            product.DOKill();
+            
+            return product;
         }
     }
 }

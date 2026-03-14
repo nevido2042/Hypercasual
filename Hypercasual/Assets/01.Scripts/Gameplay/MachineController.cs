@@ -11,7 +11,7 @@ namespace Hero
     {
         [Header("References")]
         public GemstoneDeliveryZone inputZone;   // 젬스톤을 가져올 구역
-        public ProductDeliveryZone outputZone;   // 제품을 보낼 구역
+        public HandcuffsStackZone outputZone;   // 제품을 보낼 구역
         public GameObject productPrefab;         // 생산할 제품 프리팹 (수갑)
         public Transform inputPoint;              // 젬스톤이 머신으로 들어가는 입구
         public Transform outputPoint;             // 제품이 튀어나오는 출구
