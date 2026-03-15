@@ -107,6 +107,9 @@ namespace Hero
             // 배달 연출: 부모 설정 및 이동
             gem.SetParent(stackContainer);
             
+            // 크기가 0이거나 작아져 있을 수 있으므로 초기화 (머신에서 소모될 때 0이 되기 때문)
+            gem.localScale = Vector3.one; 
+            
             // DOTween으로 점프하듯 이동하는 연출
             gem.DOLocalJump(targetLocalPos, 2f, 1, 0.3f).SetEase(Ease.OutQuad).OnComplete(() => {
                 // 적재가 완료된 시점에 커졌다 원래대로 돌아오는 연출 (Pop 효과)

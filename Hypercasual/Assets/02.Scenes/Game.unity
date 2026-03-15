@@ -5062,7 +5062,7 @@ GameObject:
   - component: {fileID: 824733631}
   - component: {fileID: 824733630}
   m_Layer: 0
-  m_Name: EffectManager
+  m_Name: ObjectPoolingManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5077,7 +5077,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 824733629}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ecf3ab2421ebf54faf51a6af7d4162f, type: 3}
+  m_Script: {fileID: 11500000, guid: 334c3701030e9ad42b03a993cfc1cfec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &824733631
@@ -8223,7 +8223,6 @@ MonoBehaviour:
   inputZone: {fileID: 230918662}
   outputZone: {fileID: 23908479}
   productPrefab: {fileID: 3438569352164686805, guid: bab45a2c9dceb5545aa554e495af1cf6, type: 3}
-  inputPoint: {fileID: 301198613}
   outputPoint: {fileID: 1539593468}
   productionTime: 0.5
   checkInterval: 0.5
@@ -10024,9 +10023,9 @@ MonoBehaviour:
   cashPrefab: {fileID: 4357539495024858515, guid: d9e1230ed0c70cc43aea8a37f6350e04, type: 3}
   columns: 2
   rows: 3
-  spacingX: 3
-  spacingZ: 1.5
-  stackHeight: 0.05
+  spacingX: 4
+  spacingZ: 2
+  stackHeight: 0.1
 --- !u!1001 &1524048257
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13118,7 +13117,7 @@ MonoBehaviour:
   stackHeight: 0.1
   stackContainer: {fileID: 0}
   queueManager: {fileID: 0}
-  distributeInterval: 0.5
+  distributeInterval: 0.2
   stackJumpDuration: 0.3
   stackPopDuration: 0.3
 --- !u!1001 &2107484948
@@ -13597,7 +13596,7 @@ MonoBehaviour:
   frontStackPoint: {fileID: 0}
   frontVerticalSpacing: 0.1
   moneyStackPoint: {fileID: 0}
-  moneyVerticalSpacing: 0.07
+  moneyVerticalSpacing: 0.03
   baseBackOffset: -0.45
   stackLineDistance: 0.35
   tiltSensitivity: 5

@@ -13,7 +13,7 @@ namespace Hero
         [SerializeField] private GemstoneDeliveryZone inputZone;   // 젬스톤을 가져올 구역
         [SerializeField] private HandcuffsStackZone outputZone;   // 제품을 보낼 구역
         [SerializeField] private GameObject productPrefab;         // 생산할 제품 프리팹 (수갑)
-        [SerializeField] private Transform inputPoint;              // 젬스톤이 머신으로 들어가는 입구
+        //[SerializeField] private Transform inputPoint;              // 젬스톤이 머신으로 들어가는 입구
         [SerializeField] private Transform outputPoint;             // 제품이 튀어나오는 출구
 
         [Header("Production Settings")]
@@ -56,21 +56,15 @@ namespace Hero
             Transform gem = inputZone.ConsumeGem();
             if (gem != null)
             {
-                // 젬스톤이 입구로 빨려 들어가는 연출
-                gem.SetParent(transform);
-                gem.DOJump(inputPoint.position, 1f, 1, 0.4f).SetEase(Ease.InQuad);
-                gem.DOScale(Vector3.zero, 0.4f).OnComplete(() => {
-                    // 실제 젬스톤 오브젝트는 풀로 반환되거나 파괴 (여기서는 파괴 처리 또는 비활성화)
-                    gem.gameObject.SetActive(false);
-                    // TODO: EffectManager 등을 통해 풀로 돌려보내는 로직 필요 (현재는 일단 비활성화)
-                });
+                // 소모된 젬스톤 즉시 풀로 반환
+                ObjectPoolingManager.Instance.Release(gem.gameObject);
 
                 yield return new WaitForSeconds(productionTime);
 
                 // 2. 수갑 생산
                 if (productPrefab != null)
                 {
-                    GameObject product = Instantiate(productPrefab, outputPoint.position, Quaternion.identity);
+                    GameObject product = ObjectPoolingManager.Instance.Spawn(productPrefab, outputPoint.position, Quaternion.identity);
                     
                     // 생산된 제품이 튀어나오는 연출
                     product.transform.localScale = Vector3.zero;

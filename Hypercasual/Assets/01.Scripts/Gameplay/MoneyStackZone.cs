@@ -19,6 +19,10 @@ namespace Hero
         public float spacingX = 0.6f;        // 가로 간격
         public float spacingZ = 0.4f;        // 세로 간격
         public float stackHeight = 0.15f;    // 층간 높이
+        
+        [Header("Collection Settings")]
+        [SerializeField] private float collectInterval = 0.1f; // 수집 간격 (초)
+        private float nextCollectTime = 0f;
 
         private List<Transform> stackedCash = new List<Transform>();
 
@@ -36,7 +40,7 @@ namespace Hero
             {
                 if (cashPrefab == null) break;
 
-                GameObject go = Instantiate(cashPrefab, startPos, Quaternion.identity);
+                GameObject go = ObjectPoolingManager.Instance.Spawn(cashPrefab, startPos, Quaternion.identity);
                 Transform cash = go.transform;
                 
                 AddCashToStack(cash);
@@ -81,8 +85,10 @@ namespace Hero
                 if (player != null && stackedCash.Count > 0)
                 {
                     // 수집 속도 조절
-                    if (Time.frameCount % 5 == 0)
+                    if (Time.time >= nextCollectTime)
                     {
+                        nextCollectTime = Time.time + collectInterval;
+                        
                         Transform cash = ConsumeCash();
                         if (cash != null)
                         {

@@ -28,7 +28,7 @@ namespace Hero
                 {
                     if (cashPrefab != null)
                     {
-                        GameObject cashObj = Instantiate(cashPrefab);
+                        GameObject cashObj = ObjectPoolingManager.Instance.Spawn(cashPrefab, transform.position + transform.forward * 2f + Vector3.up, Quaternion.identity);
                         playerStack.AddToMoneyStack(cashObj.transform);
                     }
                 }
@@ -40,7 +40,7 @@ namespace Hero
                 {
                     if (gemstonePrefab != null)
                     {
-                        GameObject gemObj = Instantiate(gemstonePrefab);
+                        GameObject gemObj = ObjectPoolingManager.Instance.Spawn(gemstonePrefab, transform.position + transform.forward * 2f + Vector3.up, Quaternion.identity);
                         playerStack.AddToStack(gemObj);
                     }
                 }

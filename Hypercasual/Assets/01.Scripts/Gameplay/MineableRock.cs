@@ -45,7 +45,7 @@ namespace Hero
             if (gemstonePrefab != null)
             {
                 // 인스턴스 생성 후 해당 주체에게 전달
-                GameObject gemObj = Instantiate(gemstonePrefab, transform.position, Quaternion.identity);
+                GameObject gemObj = ObjectPoolingManager.Instance.Spawn(gemstonePrefab, transform.position, Quaternion.identity);
                 
                 // 1. 광부가 캔 경우 -> 배달 구역으로
                 if (miner != null && miner.CompareTag("Miner"))
@@ -76,7 +76,7 @@ namespace Hero
             // 파티클 생성 (오브젝트 풀링 사용)
             if (hitParticlePrefab != null)
             {
-                EffectManager.Instance.Spawn(hitParticlePrefab, transform.position, Quaternion.identity);
+                ObjectPoolingManager.Instance.Spawn(hitParticlePrefab, transform.position, Quaternion.identity);
             }
 
             // DOTween 작아지는 애니메이션 대신 즉시 렌더러를 꺼서 아예 안 보이게 처리

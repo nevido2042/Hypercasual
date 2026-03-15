@@ -93,7 +93,7 @@ namespace Hero
 
                     // 돈이 소모되는 연출 (구역 중앙으로 날아감)
                     money.DOMove(transform.position + Vector3.up * 0.5f, 0.2f).OnComplete(() => {
-                        Destroy(money.gameObject);
+                        ObjectPoolingManager.Instance.Release(money.gameObject);
                         // UI에 살짝 펄스 효과
                         if (progressText != null) progressText.transform.DOPunchScale(Vector3.one * 0.2f, 0.2f);
                     });

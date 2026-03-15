@@ -93,7 +93,7 @@ namespace Hero
                     UpdateZoneUI();
 
                     money.DOMove(transform.position + Vector3.up * 0.5f, 0.2f).OnComplete(() => {
-                        Destroy(money.gameObject);
+                        ObjectPoolingManager.Instance.Release(money.gameObject);
                         if (progressText != null) progressText.transform.DOPunchScale(Vector3.one * 0.2f, 0.2f);
                     });
 

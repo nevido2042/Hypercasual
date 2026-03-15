@@ -148,7 +148,7 @@ namespace Hero
                     
                     if (handcuff != null && handcuff.gameObject != null) 
                     {
-                        Destroy(handcuff.gameObject);
+                        ObjectPoolingManager.Instance.Release(handcuff.gameObject);
                     }
 
                     // 수령 완료 시 펀치 스케일 연출
