@@ -91,7 +91,7 @@ namespace Hero
             }
         }
 
-        private void DeliverGem(Transform gem)
+        public void DeliverGem(Transform gem)
         {
             deliveredGems.Add(gem);
             int index = deliveredGems.Count - 1;

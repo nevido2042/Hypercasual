@@ -26,18 +26,30 @@ namespace Hero
 
         public void Setup(Vector3 startWorldPos, string text, Color color)
         {
+            // 카메라가 소실된 경우(씬 전환 등)를 대비해 다시 찾음
+            if (mainCam == null) mainCam = Camera.main;
+
             worldTargetPos = startWorldPos;
             currentOffset = Vector3.zero;
+            
+            // 기존에 실행 중인 트윈이 있다면 중지 (풀링 재사용 시 중요)
+            textMesh.DOKill();
+            DOTween.Kill(this); // currentOffset 트윈 식별용
 
             if (textMesh != null)
             {
                 textMesh.text = text;
                 textMesh.color = color;
-                textMesh.alpha = 1f; // 풀 사용 시 이전 상태 초기화
+                textMesh.alpha = 1f;
+                textMesh.enabled = true;
                 
-                // DOTween 연출: 오프셋 값을 위로 이동시키면서 페이드 아웃
+                // 스케일 초기화
+                transform.localScale = Vector3.one;
+                
+                // currentOffset 애니메이션
                 DOTween.To(() => currentOffset, x => currentOffset = x, new Vector3(0, 1.5f, 0), 1.0f)
-                    .SetEase(Ease.OutCubic);
+                    .SetEase(Ease.OutCubic)
+                    .SetTarget(this); // Kill(this)로 지울 수 있도록 타겟 설정
                 
                 textMesh.DOFade(0, 1.0f).SetEase(Ease.InQuint).OnComplete(() => {
                     if (returnToPool != null) returnToPool.Release();

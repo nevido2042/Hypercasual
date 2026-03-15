@@ -35,12 +35,12 @@ namespace Hero
             }
 
             // G/H 키를 통해 씬 내에서 카메라 각도 조절 테스트 가능
-            if (Input.GetKeyDown(KeyCode.G) && !smoothRotating)
+            if (Input.GetKeyDown(KeyCode.Alpha1) && !smoothRotating)
             {
                 StartCoroutine("RotateAroundTarget", 45);
             }
 
-            if (Input.GetKeyDown(KeyCode.H) && !smoothRotating)
+            if (Input.GetKeyDown(KeyCode.Alpha2) && !smoothRotating)
             {
                 StartCoroutine("RotateAroundTarget", -45);
             }

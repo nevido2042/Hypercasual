@@ -11,10 +11,12 @@ namespace Hero
     public class HandcuffsConsumeZone : MonoBehaviour
     {
         [Header("Settings")]
-        [SerializeField] private float stackHeight = 0.2f;
+        [SerializeField] private float stackHeight = 0.1f;
         [SerializeField] private Transform stackContainer;
         [SerializeField] private PrisonerQueueManager queueManager;
         [SerializeField] private float distributeInterval = 0.5f;
+        [SerializeField] private float stackJumpDuration = 0.3f;
+        [SerializeField] private float stackPopDuration = 0.3f;
 
         private List<Transform> consumedProducts = new List<Transform>();
         private float nextDistributeTime = 0f;
@@ -80,11 +82,11 @@ namespace Hero
             Vector3 targetLocalPos = new Vector3(0, index * stackHeight, 0);
 
             item.SetParent(stackContainer);
-            item.DOLocalJump(targetLocalPos, 2f, 1, 0.3f).SetEase(Ease.OutQuad).OnComplete(() => {
+            item.DOLocalJump(targetLocalPos, 2f, 1, stackJumpDuration).SetEase(Ease.OutQuad).OnComplete(() => {
                 // 적재 완료 Pop 연출
-                if (item != null) item.DOPunchScale(Vector3.one * 0.5f, 0.3f, 5, 1f);
+                if (item != null) item.DOPunchScale(Vector3.one * 0.5f, stackPopDuration, 5, 1f);
             });
-            item.DOLocalRotate(Vector3.zero, 0.3f);
+            item.DOLocalRotate(Vector3.zero, stackJumpDuration);
         }
     }
 }

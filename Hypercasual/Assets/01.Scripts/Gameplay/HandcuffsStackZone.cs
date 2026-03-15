@@ -10,9 +10,12 @@ namespace Hero
     public class HandcuffsStackZone : MonoBehaviour
     {
         [Header("Settings")]
-        [SerializeField] private float stackHeight = 0.2f;      // 수직 간격
+        [SerializeField] private float stackHeight = 0.1f;      // 수직 간격
         [SerializeField] private Transform stackContainer;      // 부모 오브젝트
         [SerializeField] private float arrivalSpeed = 5.0f;     // 제품 이동 속도
+        [SerializeField] private float transferInterval = 0.1f; // 플레이어에게 전달하는 시간 간격
+        
+        private float nextTransferTime = 0f;
 
         private List<Transform> stackedProducts = new List<Transform>();
 
@@ -65,8 +68,10 @@ namespace Hero
                 {
                     // 일정 간격으로 전달 (여기서는 단순하게 매 프레임 체크 대신 젬스톤 배달 로직과 유사하게 처리 가능하지만 일단 단순 구현)
                     // 현재는 테스트를 위해 즉시 전달 로직 (필요시 Interval 추가 가능)
-                    if (Time.frameCount % 10 == 0) // 속도 조절
+                    if (Time.time >= nextTransferTime)
                     {
+                        nextTransferTime = Time.time + transferInterval;
+                        
                         Transform product = ConsumeProduct();
                         if (product != null)
                         {

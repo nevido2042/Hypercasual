@@ -163,7 +163,7 @@ namespace Hero
             {
                 if (minedCount >= maxMineTargets) break;
                 
-                rock.Mine(); // 바위 채굴 실행
+                rock.Mine(gameObject); // 바위 채굴 실행
                 minedCount++;
             }
         }

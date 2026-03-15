@@ -54,8 +54,8 @@ namespace Hero
                 MineableRock rock = other.GetComponent<MineableRock>();
                 if (rock != null && rock.CanBeMined)
                 {
-                    rock.Mine();
-                    // 타격 시 살짝 흔들리는 효과 등 추가 가능
+                    // 드릴은 플레이어의 자식이므로 최상단 루트(플레이어)를 전달
+                    rock.Mine(transform.root.gameObject);
                 }
             }
         }

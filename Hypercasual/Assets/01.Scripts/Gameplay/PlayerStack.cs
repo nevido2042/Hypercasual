@@ -16,6 +16,7 @@ namespace Hero
         
         [Header("전면 수갑 스택")]
         [SerializeField] private Transform frontStackPoint;   // 수갑이 쌓일 앞쪽 위치
+        [SerializeField] private float frontVerticalSpacing = 0.1f; // 수갑 전용 수직 간격
         private List<Transform> handcuffsStack = new List<Transform>();
 
         [Header("현금 스택")]
@@ -36,6 +37,10 @@ namespace Hero
 
         private float nextMaxTextTime = 0f;
         private const float MAX_TEXT_COOLDOWN = 0.5f;
+        
+        [Header("애니메이션 설정")]
+        [SerializeField] private float stackJumpDuration = 0.25f; // 점프/회전 시간
+        [SerializeField] private float stackScaleDuration = 0.2f; // 크기 조절 시간
 
         private Canvas cachedCanvas;
         private Vector3 lastPosition;
@@ -46,7 +51,10 @@ namespace Hero
         {
             movement = GetComponent<PlayerMovement>();
             lastPosition = transform.position;
-            cachedCanvas = FindFirstObjectByType<Canvas>();
+            GameObject canvasObj = GameObject.FindWithTag("MainCanvas");
+            if (canvasObj != null) cachedCanvas = canvasObj.GetComponent<Canvas>();
+            
+            if (cachedCanvas == null) cachedCanvas = Object.FindFirstObjectByType<Canvas>();
             
             if (stackPoint == null)
             {
@@ -138,7 +146,7 @@ namespace Hero
             }
         }
 
-        public void AddToStack(GameObject gemstonePrefab)
+        public void AddToStack(GameObject gemstoneGO)
         {
             if (stackList.Count >= maxCapacity)
             {
@@ -147,21 +155,24 @@ namespace Hero
                     nextMaxTextTime = Time.time + MAX_TEXT_COOLDOWN;
                     ShowMaxText();
                 }
+                
+                // 스택이 꽉 찼다면 받아온 오브젝트 처리 (파괴 혹은 그냥 둠)
+                // 여기서는 바위에서 이미 생성해서 넘겨준 것이므로, 못 받으면 파괴하는 것이 깔끔함
+                Destroy(gemstoneGO);
                 return;
             }
 
             Transform parent = stackList.Count == 0 ? stackPoint : stackList[stackList.Count - 1];
             Vector3 targetLocalPos = stackList.Count == 0 ? Vector3.zero : new Vector3(0, verticalSpacing, 0);
 
-            GameObject gemGO = Instantiate(gemstonePrefab, stackPoint.position, Quaternion.identity);
-            Gemstone gemstone = gemGO.GetComponent<Gemstone>();
-            if (gemstone == null) gemstone = gemGO.AddComponent<Gemstone>();
+            Gemstone gemstone = gemstoneGO.GetComponent<Gemstone>();
+            if (gemstone == null) gemstone = gemstoneGO.AddComponent<Gemstone>();
 
             gemstone.AttachToStack(parent, targetLocalPos, () => {
                 stackList.Add(gemstone.transform);
                 
                 gemstone.transform.localScale = Vector3.zero;
-                gemstone.transform.DOScale(1.0f, 0.25f).SetEase(Ease.OutBack);
+                gemstone.transform.DOScale(1.0f, stackScaleDuration).SetEase(Ease.OutBack);
 
                 // 젬스톤이 생겼으므로 현금 줄 위치 체크
                 UpdateStackPositions();
@@ -172,10 +183,17 @@ namespace Hero
         {
             if (maxTextPrefab != null)
             {
-                if (cachedCanvas == null) cachedCanvas = FindFirstObjectByType<Canvas>();
+                if (cachedCanvas == null)
+                {
+                    GameObject canvasObj = GameObject.FindWithTag("MainCanvas");
+                    if (canvasObj != null) cachedCanvas = canvasObj.GetComponent<Canvas>();
+                    
+                    if (cachedCanvas == null) cachedCanvas = Object.FindFirstObjectByType<Canvas>();
+                }
                 if (cachedCanvas == null) return;
 
-                Vector3 spawnWorldPos = transform.position + Vector3.up * 2.5f;
+                // 캐릭터 위치에서 약간 위쪽 (너무 높으면 화면 밖으로 나갈 수 있음)
+                Vector3 spawnWorldPos = transform.position + Vector3.up * 2.0f;
                 GameObject go = EffectManager.Instance.Spawn(maxTextPrefab, spawnWorldPos, Quaternion.identity, cachedCanvas.transform);
                 
                 FloatingText ft = go.GetComponent<FloatingText>();
@@ -202,14 +220,14 @@ namespace Hero
         public void AddToFrontStack(Transform item)
         {
             Transform parent = handcuffsStack.Count == 0 ? frontStackPoint : handcuffsStack[handcuffsStack.Count - 1];
-            Vector3 targetLocalPos = handcuffsStack.Count == 0 ? Vector3.zero : new Vector3(0, verticalSpacing, 0);
+            Vector3 targetLocalPos = handcuffsStack.Count == 0 ? Vector3.zero : new Vector3(0, frontVerticalSpacing, 0);
 
             item.SetParent(parent);
-            item.DOLocalJump(targetLocalPos, 1.5f, 1, 0.25f).SetEase(Ease.OutQuad);
-            item.DOLocalRotate(Vector3.zero, 0.25f);
+            item.DOLocalJump(targetLocalPos, 1.5f, 1, stackJumpDuration).SetEase(Ease.OutQuad);
+            item.DOLocalRotate(Vector3.zero, stackJumpDuration);
             
             item.localScale = Vector3.zero;
-            item.DOScale(1f, 0.2f).SetEase(Ease.OutBack);
+            item.DOScale(1f, stackScaleDuration).SetEase(Ease.OutBack);
 
             handcuffsStack.Add(item);
         }
@@ -250,14 +268,14 @@ namespace Hero
             // (이미 부모인 첫 번째 아이템이 보정된 크기를 가지고 있으므로)
             if (!isFirst) targetLocalScale = Vector3.one;
 
-            money.DOLocalJump(targetLocalPos, 2f, 1, 0.3f).SetEase(Ease.OutQuad);
-            money.DOLocalRotate(Vector3.zero, 0.3f);
+            money.DOLocalJump(targetLocalPos, 2f, 1, stackJumpDuration).SetEase(Ease.OutQuad);
+            money.DOLocalRotate(Vector3.zero, stackJumpDuration);
             
             moneyStack.Add(money);
 
             // 스케일 연출
             money.localScale = Vector3.zero;
-            money.DOScale(targetLocalScale, 0.2f).SetEase(Ease.OutBack);
+            money.DOScale(targetLocalScale, stackScaleDuration).SetEase(Ease.OutBack);
         }
 
         public Transform RemoveFromMoneyStack()
