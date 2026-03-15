@@ -23,6 +23,9 @@ namespace Hero
         [SerializeField] private Transform moneyStackPoint;   // 현금이 쌓일 뒤쪽 위치
         [SerializeField] private float moneyVerticalSpacing = 0.07f; // 현금 전용 수직 간격 (기존의 약 1/3)
         private List<Transform> moneyStack = new List<Transform>();
+
+        public int MoneyCount => moneyStack.Count;
+        public System.Action OnMoneyStackChanged;
         
         [Header("스택 배치 설정")]
         [SerializeField] private float baseBackOffset = -0.45f;    // 첫 번째 줄(젬스톤)의 Z 위치
@@ -287,6 +290,7 @@ namespace Hero
                 .SetLink(money.gameObject);
             
             moneyStack.Add(money);
+            OnMoneyStackChanged?.Invoke();
 
             // 스케일 연출
             money.localScale = Vector3.zero;
@@ -302,6 +306,7 @@ namespace Hero
             int lastIndex = moneyStack.Count - 1;
             Transform item = moneyStack[lastIndex];
             moneyStack.RemoveAt(lastIndex);
+            OnMoneyStackChanged?.Invoke();
             
             return item;
         }

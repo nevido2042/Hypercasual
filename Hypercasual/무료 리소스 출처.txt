@@ -56,3 +56,5 @@ VFX (파티클) 리소스
 https://assetstore.unity.com/packages/3d/props/industrial/workplace-tools-86242
 
 https://assetstore.unity.com/packages/3d/vehicles/land/tow-and-luggage-car-pack-airport-215095
+
+https://assetstore.unity.com/packages/2d/gui/icons/2d-icons-casual-icon-pack-365530
