@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Hero
 {
@@ -19,6 +19,12 @@ namespace Hero
         Quaternion targetRotation;
         Vector3 targetPos;
         bool smoothRotating = false;
+
+        void Awake()
+        {
+            // 초기 카메라 각도를 -45도 회전된 상태(Alpha2 실행 결과)로 시작
+            offsetPos = Quaternion.Euler(0, -45, 0) * offsetPos;
+        }
 
         void Update()
         {

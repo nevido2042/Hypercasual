@@ -8,11 +8,17 @@ namespace Hero
     public class PrisonerSpawner : MonoBehaviour
     {
         [Header("References")]
-        public GameObject prisonerPrefab;
+        public GameObject uniformModelPrefab;
+        public Avatar uniformAvatar;
+        public RuntimeAnimatorController prisonerAnimatorController;
+        public GameObject[] prisonerVisuals;
         public PrisonerQueueManager queueManager;
         public Transform spawnPoint;
 
         [Header("Settings")]
+        public int minRequired = 1;
+        public int maxRequired = 5;
+        public float moveSpeed = 5f;
         public float spawnInterval = 5f;
         public bool autoSpawn = true;
 
@@ -31,16 +37,29 @@ namespace Hero
 
         public void SpawnPrisoner()
         {
-            if (prisonerPrefab == null || queueManager == null) return;
+            if (queueManager == null || prisonerVisuals == null || prisonerVisuals.Length == 0) return;
 
+            // 1. 랜덤 비주얼 데이터 선택
+            GameObject visualPrefab = prisonerVisuals[Random.Range(0, prisonerVisuals.Length)];
             Vector3 pos = spawnPoint != null ? spawnPoint.position : transform.position;
-            GameObject go = Instantiate(prisonerPrefab, pos, Quaternion.identity);
             
-            Prisoner prisoner = go.GetComponent<Prisoner>();
-            if (prisoner != null)
-            {
-                queueManager.AddToQueue(prisoner);
-            }
+            // 비주얼을 감싸는 루트 오브젝트 생성
+            GameObject prisonerGO = new GameObject("Prisoner_Dynamic");
+            prisonerGO.transform.position = pos;
+            prisonerGO.transform.rotation = Quaternion.identity;
+
+            // 2. Prisoner 컴포넌트 부착
+            Prisoner prisoner = prisonerGO.AddComponent<Prisoner>();
+            
+            // 3. 컴포넌트 초기화 및 비주얼 설정 (모든 비주얼은 동일한 아바타를 공유)
+            // uniformAvatar를 기본 아바타로 사용하거나, visualData에서 공통으로 정의된 것을 사용
+            prisoner.Initialize(minRequired, maxRequired, moveSpeed, uniformModelPrefab, prisonerAnimatorController, uniformAvatar);
+            prisoner.SetVisuals(visualPrefab, uniformModelPrefab);
+
+            // 4. 네임스페이스 및 태그 설정
+            prisonerGO.layer = LayerMask.NameToLayer("Default");
+
+            queueManager.AddToQueue(prisoner);
         }
     }
 }
