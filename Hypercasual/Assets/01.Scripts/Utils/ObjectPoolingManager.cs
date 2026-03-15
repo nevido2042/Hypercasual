@@ -14,6 +14,7 @@ namespace Hero
         // 프리팹별 풀 관리를 위한 딕셔너리
         private Dictionary<int, ObjectPool<GameObject>> poolDictionary = new Dictionary<int, ObjectPool<GameObject>>();
         private Dictionary<int, Vector3> originalScales = new Dictionary<int, Vector3>();
+        private Dictionary<int, Transform> groupRoots = new Dictionary<int, Transform>();
 
         void Awake()
         {
@@ -39,11 +40,16 @@ namespace Hero
 
             if (!poolDictionary.ContainsKey(key))
             {
+                // 프리팹별 전용 컨테이너 생성 (매니저 바로 아래)
+                GameObject groupObj = new GameObject($"Pool_{prefab.name}");
+                groupObj.transform.SetParent(this.transform);
+                groupRoots[key] = groupObj.transform;
+
                 poolDictionary[key] = new ObjectPool<GameObject>(
                     createFunc: () => {
                         GameObject obj = Instantiate(prefab);
-                        var pool = poolDictionary[key];
-                        //Debug.Log($"[Pool: {prefab.name}] Created NEW (Active: {pool.CountActive}, Inactive: {pool.CountInactive}, Total: {pool.CountAll + 1})");
+                        // 생성 시점에는 일단 전용 컨테이너 하위로
+                        obj.transform.SetParent(groupRoots[key]);
                         return obj;
                     },
                     actionOnGet: (obj) => {
@@ -51,6 +57,11 @@ namespace Hero
                     },
                     actionOnRelease: (obj) => {
                         obj.SetActive(false);
+                        // 반환 시 다시 전용 컨테이너 하위로 복귀 (하이어라키 정리)
+                        if (groupRoots.ContainsKey(key))
+                        {
+                            obj.transform.SetParent(groupRoots[key]);
+                        }
                         // 반환 시 잔여 트윈 정리 (안전성)
                         DG.Tweening.DOTween.Kill(obj);
                     },
@@ -83,7 +94,9 @@ namespace Hero
             var pool = poolDictionary[key];
             
             spawnedObj.transform.SetPositionAndRotation(position, rotation);
-            spawnedObj.transform.SetParent(parent);
+            
+            // 부모 설정: 지정된 부모가 없으면 프리팹 전용 컨테이너를 부모로 함
+            spawnedObj.transform.SetParent(parent != null ? parent : groupRoots[key]);
             spawnedObj.transform.localScale = originalScales[key]; // 원본 프리팹 스케일로 복원
 
             var returnToPoolComp = spawnedObj.GetComponent<ReturnToPool>();
