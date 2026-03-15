@@ -111,11 +111,17 @@ namespace Hero
             gem.localScale = Vector3.one; 
             
             // DOTween으로 점프하듯 이동하는 연출
-            gem.DOLocalJump(targetLocalPos, 2f, 1, 0.3f).SetEase(Ease.OutQuad).OnComplete(() => {
-                // 적재가 완료된 시점에 커졌다 원래대로 돌아오는 연출 (Pop 효과)
-                gem.DOPunchScale(Vector3.one * 0.5f, 0.3f, 5, 1f);
-            });
-            gem.DOLocalRotate(Vector3.zero, 0.3f);
+            gem.DOKill();
+            gem.DOLocalJump(targetLocalPos, 2f, 1, 0.3f)
+                .SetEase(Ease.OutQuad)
+                .SetLink(gem.gameObject)
+                .OnComplete(() => {
+                    if (gem == null) return;
+                    // 적재가 완료된 시점에 커졌다 원래대로 돌아오는 연출 (Pop 효과)
+                    gem.DOKill();
+                    gem.DOPunchScale(Vector3.one * 0.5f, 0.3f, 5, 1f).SetLink(gem.gameObject);
+                });
+            gem.DOLocalRotate(Vector3.zero, 0.3f).SetLink(gem.gameObject);
         }
 
         private void SetMarkerColor(Color color)

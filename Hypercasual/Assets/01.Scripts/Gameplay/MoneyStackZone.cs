@@ -71,10 +71,15 @@ namespace Hero
             cash.SetParent(this.transform);
             
             // 날아가는 연출
-            cash.DOLocalJump(targetLocalPos, 2f, 1, 0.4f).SetEase(Ease.OutQuad).OnComplete(() => {
-                cash.DOPunchScale(Vector3.one * 0.3f, 0.2f);
-            });
-            cash.DOLocalRotate(Vector3.zero, 0.4f);
+            cash.DOKill();
+            cash.DOLocalJump(targetLocalPos, 2f, 1, 0.4f)
+                .SetEase(Ease.OutQuad)
+                .SetLink(cash.gameObject)
+                .OnComplete(() => {
+                    cash.DOKill();
+                    cash.DOPunchScale(Vector3.one * 0.3f, 0.2f).SetLink(cash.gameObject);
+                });
+            cash.DOLocalRotate(Vector3.zero, 0.4f).SetLink(cash.gameObject);
         }
 
         private void OnTriggerStay(Collider other)

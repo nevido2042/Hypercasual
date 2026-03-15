@@ -142,7 +142,9 @@ namespace Hero
             {
                 moneyStackPoint.localScale = Vector3.one; // 머니스택포인트는 항상 1,1,1 유지
                 moneyStackPoint.DOKill();
-                moneyStackPoint.DOLocalMove(targetPos, 0.25f).SetEase(Ease.OutQuad);
+                moneyStackPoint.DOLocalMove(targetPos, 0.25f)
+                    .SetEase(Ease.OutQuad)
+                    .SetLink(moneyStackPoint.gameObject);
             }
         }
 
@@ -172,7 +174,10 @@ namespace Hero
                 stackList.Add(gemstone.transform);
                 
                 gemstone.transform.localScale = Vector3.zero;
-                gemstone.transform.DOScale(1.0f, stackScaleDuration).SetEase(Ease.OutBack);
+                gemstone.transform.DOKill();
+                gemstone.transform.DOScale(1.0f, stackScaleDuration)
+                    .SetEase(Ease.OutBack)
+                    .SetLink(gemstone.gameObject);
 
                 // 젬스톤이 생겼으므로 현금 줄 위치 체크
                 UpdateStackPositions();
@@ -223,11 +228,17 @@ namespace Hero
             Vector3 targetLocalPos = handcuffsStack.Count == 0 ? Vector3.zero : new Vector3(0, frontVerticalSpacing, 0);
 
             item.SetParent(parent);
-            item.DOLocalJump(targetLocalPos, 1.5f, 1, stackJumpDuration).SetEase(Ease.OutQuad);
-            item.DOLocalRotate(Vector3.zero, stackJumpDuration);
+            item.DOKill();
+            item.DOLocalJump(targetLocalPos, 1.5f, 1, stackJumpDuration)
+                .SetEase(Ease.OutQuad)
+                .SetLink(item.gameObject);
+            item.DOLocalRotate(Vector3.zero, stackJumpDuration)
+                .SetLink(item.gameObject);
             
             item.localScale = Vector3.zero;
-            item.DOScale(1f, stackScaleDuration).SetEase(Ease.OutBack);
+            item.DOScale(1f, stackScaleDuration)
+                .SetEase(Ease.OutBack)
+                .SetLink(item.gameObject);
 
             handcuffsStack.Add(item);
         }
@@ -268,14 +279,20 @@ namespace Hero
             // (이미 부모인 첫 번째 아이템이 보정된 크기를 가지고 있으므로)
             if (!isFirst) targetLocalScale = Vector3.one;
 
-            money.DOLocalJump(targetLocalPos, 2f, 1, stackJumpDuration).SetEase(Ease.OutQuad);
-            money.DOLocalRotate(Vector3.zero, stackJumpDuration);
+            money.DOKill();
+            money.DOLocalJump(targetLocalPos, 2f, 1, stackJumpDuration)
+                .SetEase(Ease.OutQuad)
+                .SetLink(money.gameObject);
+            money.DOLocalRotate(Vector3.zero, stackJumpDuration)
+                .SetLink(money.gameObject);
             
             moneyStack.Add(money);
 
             // 스케일 연출
             money.localScale = Vector3.zero;
-            money.DOScale(targetLocalScale, stackScaleDuration).SetEase(Ease.OutBack);
+            money.DOScale(targetLocalScale, stackScaleDuration)
+                .SetEase(Ease.OutBack)
+                .SetLink(money.gameObject);
         }
 
         public Transform RemoveFromMoneyStack()

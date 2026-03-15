@@ -137,11 +137,9 @@ namespace Hero
             // 수갑을 죄수의 자식으로 넣고 점프 연출
             handcuff.SetParent(transform);
             
-            // 기존 트윈이 있다면 정리 (안전성)
             handcuff.DOKill();
-
             handcuff.DOLocalJump(Vector3.up * 1.5f, 1f, 1, 0.3f)
-                .SetTarget(this.gameObject)
+                .SetLink(handcuff.gameObject)
                 .OnComplete(() => {
                     // 콜백 시점에 죄수나 수갑이 파괴되었을 수 있으므로 엄격한 체크
                     if (this == null || gameObject == null || transform == null) return;
@@ -152,8 +150,9 @@ namespace Hero
                     }
 
                     // 수령 완료 시 펀치 스케일 연출
+                    transform.DOKill();
                     transform.DOPunchScale(Vector3.one * 0.15f, 0.2f, 5, 1f)
-                        .SetTarget(this.gameObject);
+                        .SetLink(this.gameObject);
                 });
 
             if (IsSatisfied)

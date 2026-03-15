@@ -190,15 +190,18 @@ namespace Hero
             // 시각적 피드백
             if (upgradeTier == 1 && drillInstance != null)
             {
-                drillInstance.transform.DOPunchScale(Vector3.one * 0.5f, 0.5f);
+                drillInstance.transform.DOKill();
+                drillInstance.transform.DOPunchScale(Vector3.one * 0.5f, 0.5f).SetLink(drillInstance.gameObject);
             }
             else if (upgradeTier == 2 && drillCarInstance != null)
             {
-                drillCarInstance.transform.DOPunchScale(Vector3.one * 0.3f, 0.5f);
+                drillCarInstance.transform.DOKill();
+                drillCarInstance.transform.DOPunchScale(Vector3.one * 0.3f, 0.5f).SetLink(drillCarInstance.gameObject);
             }
             else if (miningTool != null)
             {
-                miningTool.transform.DOPunchScale(Vector3.one * 0.5f, 0.5f);
+                miningTool.transform.DOKill();
+                miningTool.transform.DOPunchScale(Vector3.one * 0.5f, 0.5f).SetLink(miningTool);
             }
             
             Debug.Log($"[PlayerMining] Upgraded to Tier {upgradeTier}! MaxTargets: {maxMineTargets}, Range: {miningRange}");

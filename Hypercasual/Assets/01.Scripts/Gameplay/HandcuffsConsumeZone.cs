@@ -82,11 +82,19 @@ namespace Hero
             Vector3 targetLocalPos = new Vector3(0, index * stackHeight, 0);
 
             item.SetParent(stackContainer);
-            item.DOLocalJump(targetLocalPos, 2f, 1, stackJumpDuration).SetEase(Ease.OutQuad).OnComplete(() => {
-                // 적재 완료 Pop 연출
-                if (item != null) item.DOPunchScale(Vector3.one * 0.5f, stackPopDuration, 5, 1f);
-            });
-            item.DOLocalRotate(Vector3.zero, stackJumpDuration);
+            item.DOKill();
+            item.DOLocalJump(targetLocalPos, 2f, 1, stackJumpDuration)
+                .SetEase(Ease.OutQuad)
+                .SetLink(item.gameObject)
+                .OnComplete(() => {
+                    // 적재 완료 Pop 연출
+                    if (item != null) 
+                    {
+                        item.DOKill();
+                        item.DOPunchScale(Vector3.one * 0.5f, stackPopDuration, 5, 1f).SetLink(item.gameObject);
+                    }
+                });
+            item.DOLocalRotate(Vector3.zero, stackJumpDuration).SetLink(item.gameObject);
         }
     }
 }

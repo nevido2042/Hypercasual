@@ -10026,6 +10026,7 @@ MonoBehaviour:
   spacingX: 4
   spacingZ: 2
   stackHeight: 0.1
+  collectInterval: 0.01
 --- !u!1001 &1524048257
 PrefabInstance:
   m_ObjectHideFlags: 0

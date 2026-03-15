@@ -68,7 +68,10 @@ namespace Hero
                     
                     // 생산된 제품이 튀어나오는 연출
                     product.transform.localScale = Vector3.zero;
-                    product.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+                    product.transform.DOKill();
+                    product.transform.DOScale(Vector3.one, 0.3f)
+                        .SetEase(Ease.OutBack)
+                        .SetLink(product);
                     
                     // 제품 출구 방향으로 살짝 밀어내거나 컨베이어 타게 함
                     if (outputZone != null)

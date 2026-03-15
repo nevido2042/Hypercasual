@@ -29,7 +29,8 @@ namespace Hero
             // DOTween 연출: 목표 크기로 커졌다가(Yoyo) 원래대로 돌아옴을 무한 반복(-1)
             pulseTween = transform.DOScale(targetScale, duration)
                 .SetEase(easeType)
-                .SetLoops(-1, LoopType.Yoyo);
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetLink(gameObject);
         }
 
         private void OnDisable()

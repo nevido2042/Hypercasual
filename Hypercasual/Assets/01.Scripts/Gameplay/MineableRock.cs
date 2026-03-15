@@ -37,6 +37,9 @@ namespace Hero
         {
             if (!CanBeMined) return;
             CanBeMined = false;
+
+            // 추가: 현재 진행 중인 모든 트윈 중지 (예: 리스폰 연출 중 다시 채굴되는 경우 대비)
+            transform.DOKill();
             
             // 충돌 감지 비활성화
             if (col != null) col.enabled = false;
@@ -109,8 +112,12 @@ namespace Hero
 
             // 등장 연출을 위해 크기를 0으로 만들고 커지게 함
             transform.localScale = Vector3.zero;
-            // DOTween: 원래 크기로 튀어오르며 나타남(OutBack)
-            transform.DOScale(originalScale, 0.5f).SetEase(Ease.OutBack);
+            
+            // DOTween: 기존 트윈 중지 후 원래 크기로 튀어오르며 나타남(OutBack)
+            transform.DOKill();
+            transform.DOScale(originalScale, 0.5f)
+                .SetEase(Ease.OutBack)
+                .SetLink(gameObject); // 오브젝트 파괴 시 자동 정리
         }
     }
 }

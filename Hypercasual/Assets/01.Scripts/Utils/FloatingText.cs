@@ -49,12 +49,16 @@ namespace Hero
                 // currentOffset 애니메이션
                 DOTween.To(() => currentOffset, x => currentOffset = x, new Vector3(0, 1.5f, 0), 1.0f)
                     .SetEase(Ease.OutCubic)
-                    .SetTarget(this); // Kill(this)로 지울 수 있도록 타겟 설정
+                    .SetTarget(this) // Kill(this)로 지울 수 있도록 타겟 설정
+                    .SetLink(gameObject);
                 
-                textMesh.DOFade(0, 1.0f).SetEase(Ease.InQuint).OnComplete(() => {
-                    if (returnToPool != null) returnToPool.Release();
-                    else Destroy(gameObject);
-                });
+                textMesh.DOFade(0, 1.0f)
+                    .SetEase(Ease.InQuint)
+                    .SetLink(gameObject)
+                    .OnComplete(() => {
+                        if (returnToPool != null) returnToPool.Release();
+                        else Destroy(gameObject);
+                    });
             }
             else
             {

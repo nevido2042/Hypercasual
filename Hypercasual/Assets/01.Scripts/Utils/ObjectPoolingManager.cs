@@ -43,7 +43,7 @@ namespace Hero
                     createFunc: () => {
                         GameObject obj = Instantiate(prefab);
                         var pool = poolDictionary[key];
-                        Debug.Log($"[Pool: {prefab.name}] Created NEW (Active: {pool.CountActive}, Inactive: {pool.CountInactive}, Total: {pool.CountAll + 1})");
+                        //Debug.Log($"[Pool: {prefab.name}] Created NEW (Active: {pool.CountActive}, Inactive: {pool.CountInactive}, Total: {pool.CountAll + 1})");
                         return obj;
                     },
                     actionOnGet: (obj) => {
