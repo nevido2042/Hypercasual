@@ -7,7 +7,7 @@ namespace Hero
     /// <summary>
     /// 플레이어 등 뒤에 젬스톤을 쌓고 휘청거리는 연출을 담당
     /// </summary>
-    public class PlayerStack : MonoBehaviour
+    public class PlayerStack : MonoBehaviour, IHandcuffProvider
     {
         [Header("젬스톤 스택")]
         [SerializeField] private Transform stackPoint;        // 젬스톤이 쌓이기 시작할 위치

@@ -20,6 +20,8 @@ namespace Hero
         private List<Transform> stackedProducts = new List<Transform>();
 
         public Transform ArrivalPoint => transform; // 제품이 도착할 지점
+        public bool HasProducts => stackedProducts.Count > 0;
+        public int ProductCount => stackedProducts.Count;
 
         void Awake()
         {
@@ -68,21 +70,21 @@ namespace Hero
                 {
                     // 일정 간격으로 전달 (여기서는 단순하게 매 프레임 체크 대신 젬스톤 배달 로직과 유사하게 처리 가능하지만 일단 단순 구현)
                     // 현재는 테스트를 위해 즉시 전달 로직 (필요시 Interval 추가 가능)
-                    if (Time.time >= nextTransferTime)
-                    {
-                        nextTransferTime = Time.time + transferInterval;
-                        
-                        Transform product = ConsumeProduct();
-                        if (product != null)
+                        if (Time.time >= nextTransferTime)
                         {
-                            player.AddToFrontStack(product);
+                            nextTransferTime = Time.time + transferInterval;
+                            
+                            Transform product = TakeProduct();
+                            if (product != null)
+                            {
+                                player.AddToFrontStack(product);
+                            }
                         }
-                    }
                 }
             }
         }
 
-        private Transform ConsumeProduct()
+        public Transform TakeProduct()
         {
             if (stackedProducts.Count == 0) return null;
 

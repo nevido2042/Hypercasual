@@ -20,9 +20,21 @@ namespace Hero
 
         private List<Transform> consumedProducts = new List<Transform>();
         private float nextDistributeTime = 0f;
-        private bool isPlayerInDeliveryZone = false; // 플레이어 존재 여부
+        private bool isDelivererInZone = false; // 플레이어 또는 크루 존재 여부
 
-        public void SetPlayerInDeliveryZone(bool isInRange) => isPlayerInDeliveryZone = isInRange;
+        public void SetDelivererInZone(bool isInRange) => isDelivererInZone = isInRange;
+        public bool HasHandcuffs() => consumedProducts.Count > 0;
+        public int HandcuffCount => consumedProducts.Count;
+        
+        /// <summary>
+        /// 죄수가 기다리고 있고 아직 수갑을 받지 못한 상태인지 확인
+        /// </summary>
+        public bool IsPrisonerWaiting()
+        {
+            if (queueManager == null || queueManager.IsQueueEmpty) return false;
+            Prisoner p = queueManager.GetFrontPrisoner();
+            return p != null && !p.IsSatisfied && !p.IsMoving;
+        }
 
         void Awake()
         {
@@ -43,14 +55,14 @@ namespace Hero
 
         void Update()
         {
-            // 플레이어가 구역 안에 있을 때만 대기열의 죄수에게 아이템 배달
-            if (isPlayerInDeliveryZone && queueManager != null && !queueManager.IsQueueEmpty)
+            // 배달자가 구역 안에 있을 때만 대기열의 죄수에게 아이템 배달
+            if (isDelivererInZone && queueManager != null && !queueManager.IsQueueEmpty)
             {
                 // 적재된 아이템이 있을 때만 로직 수행
                 if (consumedProducts.Count > 0 && Time.time >= nextDistributeTime)
                 {
                     Prisoner target = queueManager.GetFrontPrisoner();
-                    if (target != null && !target.IsSatisfied)
+                    if (target != null && !target.IsSatisfied && !target.IsMoving)
                     {
                         DistributeToPrisoner(target);
                         nextDistributeTime = Time.time + distributeInterval;
@@ -69,6 +81,18 @@ namespace Hero
 
             // 죄수에게 아이템 전달 (Jump 연출)
             prisoner.ReceiveHandcuff(item);
+        }
+
+        public Transform TakeHandcuff()
+        {
+            if (consumedProducts.Count == 0) return null;
+
+            int lastIndex = consumedProducts.Count - 1;
+            Transform item = consumedProducts[lastIndex];
+            consumedProducts.RemoveAt(lastIndex);
+
+            item.DOKill();
+            return item;
         }
 
         /// <summary>

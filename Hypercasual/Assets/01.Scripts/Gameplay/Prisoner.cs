@@ -30,6 +30,7 @@ namespace Hero
         private MoneyStackZone moneyZone;
         private Queue<Vector3> moveQueue = new Queue<Vector3>();
         private Vector3 targetPosition;
+        public bool IsMoving => isMoving;
         private bool isMoving = false;
         private bool isLeaving = false;
 

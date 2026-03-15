@@ -4,8 +4,14 @@ using DG.Tweening;
 
 namespace Hero
 {
+    public interface IHandcuffProvider
+    {
+        bool HasHandcuffs();
+        Transform RemoveFromFrontStack();
+    }
+
     /// <summary>
-    /// 플레이어의 존재를 감지하고, 플레이어가 가진 수갑을 HandcuffsConsumeZone으로 전달하는 역할을 수행.
+    /// 플레이어 또는 크루의 존재를 감지하고, 수갑을 HandcuffsConsumeZone으로 전달하는 역할을 수행.
     /// </summary>
     public class HandcuffsDeliveryZone : MonoBehaviour
     {
@@ -21,7 +27,7 @@ namespace Hero
         [SerializeField] private Color inactiveColor = Color.gray;
 
         private Coroutine consumeCoroutine;
-        private PlayerStack playerStack;
+        private IHandcuffProvider currentProvider;
         private Material markerMaterial;
 
         void Awake()
@@ -35,51 +41,53 @@ namespace Hero
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Player"))
+            IHandcuffProvider provider = other.GetComponentInParent<IHandcuffProvider>();
+            if (provider != null)
             {
-                playerStack = other.GetComponent<PlayerStack>();
-                if (playerStack != null)
-                {
-                    SetColor(activeColor);
+                currentProvider = provider;
+                SetColor(activeColor);
+                Debug.Log($"[HandcuffsDeliveryZone] Provider detected: {other.gameObject.name} (Parent: {other.transform.parent?.name})");
 
-                    // ConsumeZone에 플레이어 도착 알림
-                    if (consumeZone != null) consumeZone.SetPlayerInDeliveryZone(true);
+                // ConsumeZone에 배달자 도착 알림
+                if (consumeZone != null) consumeZone.SetDelivererInZone(true);
 
-                    if (consumeCoroutine != null) StopCoroutine(consumeCoroutine);
-                    consumeCoroutine = StartCoroutine(ConsumeRoutine());
-                }
+                if (consumeCoroutine != null) StopCoroutine(consumeCoroutine);
+                consumeCoroutine = StartCoroutine(ConsumeRoutine());
             }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag("Player"))
+            IHandcuffProvider provider = other.GetComponentInParent<IHandcuffProvider>();
+            if (provider != null && provider == currentProvider)
             {
+                Debug.Log($"[HandcuffsDeliveryZone] Provider left: {other.gameObject.name}");
                 SetColor(inactiveColor);
 
-                // ConsumeZone에 플레이어 퇴장 알림
-                if (consumeZone != null) consumeZone.SetPlayerInDeliveryZone(false);
+                // ConsumeZone에 배달자 퇴장 알림
+                if (consumeZone != null) consumeZone.SetDelivererInZone(false);
 
                 if (consumeCoroutine != null)
                 {
                     StopCoroutine(consumeCoroutine);
                     consumeCoroutine = null;
                 }
-                playerStack = null;
+                currentProvider = null;
             }
         }
 
         private IEnumerator ConsumeRoutine()
         {
-            while (playerStack != null)
+            while (currentProvider != null)
             {
-                if (playerStack.HasHandcuffs())
+                if (currentProvider.HasHandcuffs())
                 {
                     if (consumeZone != null)
                     {
-                        Transform item = playerStack.RemoveFromFrontStack();
+                        Transform item = currentProvider.RemoveFromFrontStack();
                         if (item != null)
                         {
+                            Debug.Log($"[HandcuffsDeliveryZone] Taking handcuff from provider and delivering to ConsumeZone.");
                             consumeZone.ReceiveProduct(item);
                             yield return new WaitForSeconds(receiveInterval);
                         }
