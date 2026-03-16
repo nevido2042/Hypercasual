@@ -15,13 +15,13 @@ namespace Hero
         [SerializeField] private Vector3 rotateAxis = Vector3.up;     // 회전축 설정
         [SerializeField] private Space rotateSpace = Space.World;    // 회전 공간 (World 또는 Self)
 
-        private Vector3 startOffset;
-        private Tween floatTween;
+        private Transform _targetTransform;
+        private Vector3 _currentOffset;
+        private float _floatingY; // 애니메이션으로 제어할 추가 높이값
+        private Tween _floatTween;
 
         private void Awake()
         {
-            startOffset = transform.localPosition;
-
             // 그림자 비활성화 (마커를 더 깔끔하게 보이게 함)
             Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
             foreach (var r in renderers)
@@ -39,13 +39,12 @@ namespace Hero
         private void StartAnimation()
         {
             // 기존 트윈 제거 (가이드라인 준수)
-            transform.DOKill();
+            _floatTween?.Kill();
             
-            // 초기 위치 리셋
-            transform.localPosition = startOffset;
-
-            // 1. 위아래로 부유하는 애니메이션
-            floatTween = transform.DOLocalMoveY(startOffset.y + floatDistance, floatDuration)
+            // 1. 위아래로 부유하는 애니메이션 (가상 변수 제어)
+            // 직접 transform을 움직이지 않고 _floatingY 값을 제어하여 LateUpdate에서 합산함
+            _floatingY = 0f;
+            _floatTween = DOTween.To(() => _floatingY, x => _floatingY = x, floatDistance, floatDuration)
                 .SetEase(Ease.InOutSine)
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetLink(gameObject);
@@ -57,21 +56,37 @@ namespace Hero
             transform.Rotate(rotateAxis, rotateSpeed * Time.deltaTime, rotateSpace);
         }
 
+        private void LateUpdate()
+        {
+            // 3. 타겟 실시간 추적 (월드 좌표 기준)
+            if (_targetTransform != null)
+            {
+                // 타겟 위치 + 설정된 오프셋 + 부유 애니메이션 값
+                Vector3 targetPos = _targetTransform.position + _currentOffset;
+                targetPos.y += _floatingY;
+                
+                transform.position = targetPos;
+            }
+        }
+
         /// <summary>
-        /// 새로운 타겟 위로 마커 이동 및 활성화
+        /// 새로운 타겟 위로 마커 이동 및 활성화 (자식으로 들어가지 않음)
         /// </summary>
         public void SetTarget(Transform target, Vector3 offset)
         {
             if (target == null)
             {
-                gameObject.SetActive(false);
+                Hide();
                 return;
             }
 
+            _targetTransform = target;
+            _currentOffset = offset;
+            
             gameObject.SetActive(true);
-            transform.SetParent(target);
-            transform.localPosition = offset;
-            startOffset = offset;
+            
+            // 초기 위치 즉시 설정
+            transform.position = _targetTransform.position + _currentOffset;
             
             // 위치 변경 시 애니메이션 재시작
             StartAnimation();
@@ -79,6 +94,7 @@ namespace Hero
 
         public void Hide()
         {
+            _targetTransform = null;
             gameObject.SetActive(false);
         }
     }
