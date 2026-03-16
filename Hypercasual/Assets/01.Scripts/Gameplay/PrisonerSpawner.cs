@@ -20,6 +20,7 @@ namespace Hero
         public int maxRequired = 5;
         public float moveSpeed = 5f;
         public float spawnInterval = 5f;
+        [SerializeField] private float exitOffsetRange = 1.5f;
         public bool autoSpawn = true;
 
         private float nextSpawnTime;
@@ -53,7 +54,7 @@ namespace Hero
             
             // 3. 컴포넌트 초기화 및 비주얼 설정 (모든 비주얼은 동일한 아바타를 공유)
             // uniformAvatar를 기본 아바타로 사용하거나, visualData에서 공통으로 정의된 것을 사용
-            prisoner.Initialize(minRequired, maxRequired, moveSpeed, uniformModelPrefab, prisonerAnimatorController, uniformAvatar);
+            prisoner.Initialize(minRequired, maxRequired, moveSpeed, exitOffsetRange, uniformModelPrefab, prisonerAnimatorController, uniformAvatar);
             prisoner.SetVisuals(visualPrefab, uniformModelPrefab);
 
             // 4. 네임스페이스 및 태그 설정

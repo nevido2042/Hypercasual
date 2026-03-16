@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Hero
 {
@@ -25,8 +25,8 @@ namespace Hero
             {
                 float mag = movement.InputValue.magnitude;
                 // 드릴카에 실제로 탑승 중일 때만 뛰지 않고 가만히 서있음(Idle)
-                bool canRun = mag > 0.5f && !mining.IsBoardingDrillCar;
-                anim.SetBool("Run", canRun);
+                float speed = (mag > 0.5f && !mining.IsBoardingDrillCar) ? mag : 0f;
+                anim.SetFloat("Run", speed);
             }
 
             // 2. 채광 가능 여부에 따른 IsMining 파라미터 업데이트 (상체 레이어용)

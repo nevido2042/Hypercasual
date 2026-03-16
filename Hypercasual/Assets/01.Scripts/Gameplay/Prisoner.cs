@@ -29,6 +29,7 @@ namespace Hero
         private int requiredHandcuffs;
         public int CurrentHandcuffs => currentHandcuffs;
         private int currentHandcuffs = 0;
+        private float exitOffsetRange = 1.5f;
         
         private Rigidbody rb;
         private CapsuleCollider col;
@@ -74,13 +75,14 @@ namespace Hero
             col.height = 1f;
         }
 
-        public void Initialize(int minReq, int maxReq, float speed, GameObject uniformPrefab, RuntimeAnimatorController controller, Avatar avatar)
+        public void Initialize(int minReq, int maxReq, float speed, float offsetRange, GameObject uniformPrefab, RuntimeAnimatorController controller, Avatar avatar)
         {
             SetupComponents();
 
             this.minRequired = minReq;
             this.maxRequired = maxReq;
             this.moveSpeed = speed;
+            this.exitOffsetRange = offsetRange;
             this.uniformModelPrefab = uniformPrefab;
 
             requiredHandcuffs = Random.Range(minRequired, maxRequired + 1);
@@ -134,7 +136,7 @@ namespace Hero
                 animator.avatar = sharedAvatar;
                 
                 // 현재 이동 상태 반영
-                animator.SetBool(HashWalk, isMoving);
+                animator.SetFloat(HashWalk, isMoving ? 1f : 0f);
             }
         }
 
@@ -209,7 +211,7 @@ namespace Hero
         {
             isMoving = false;
             rb.velocity = Vector3.zero;
-            SetAnimationWalk(false);
+            SetAnimationWalk(0f);
 
             // 감옥 안에 들어왔을 때만 뒤쪽(back)을 바라보게 회전
             if (HasEnteredJail)
@@ -220,11 +222,11 @@ namespace Hero
             jailEntryTimer = 0f;
         }
 
-        private void SetAnimationWalk(bool value)
+        private void SetAnimationWalk(float value)
         {
             if (animator != null && animator.runtimeAnimatorController != null && animator.enabled)
             {
-                animator.SetBool(HashWalk, value);
+                animator.SetFloat(HashWalk, value);
             }
         }
 
@@ -255,7 +257,7 @@ namespace Hero
                 transform.rotation = Quaternion.LookRotation(direction);
             }
 
-            SetAnimationWalk(true);
+            SetAnimationWalk(1f);
         }
 
         public void ReceiveHandcuff(Transform handcuff)
@@ -329,7 +331,7 @@ namespace Hero
                     // 마지막 웨이포인트(감옥 내부)라면 랜덤 오프셋 추가
                     if (i == manager.ExitWaypoints.Count - 1)
                     {
-                        pos += new Vector3(Random.Range(-1.5f, 1.5f), 0, Random.Range(-1.5f, 1.5f));
+                        pos += new Vector3(Random.Range(-exitOffsetRange, exitOffsetRange), 0, Random.Range(-exitOffsetRange, exitOffsetRange));
                     }
                     moveQueue.Enqueue(pos);
                 }

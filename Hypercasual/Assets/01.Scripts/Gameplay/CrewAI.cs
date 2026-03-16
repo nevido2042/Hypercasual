@@ -73,11 +73,11 @@ namespace Hero
         {
             if (anim != null)
             {
-                bool isMoving = agent.velocity.magnitude > 0.1f && !agent.isStopped;
-                anim.SetBool(moveAnimParam, isMoving);
+                float currentSpeed = agent.velocity.magnitude;
+                anim.SetFloat(moveAnimParam, currentSpeed);
 
                 // 이동 방향으로 즉시 회전 (NavMeshAgent의 기본 회전보다 더 빠르게 반응하도록 보정)
-                if (isMoving && agent.velocity.sqrMagnitude > 0.01f)
+                if (currentSpeed > 0.1f && agent.velocity.sqrMagnitude > 0.01f)
                 {
                     Vector3 lookDir = agent.velocity.normalized;
                     lookDir.y = 0;

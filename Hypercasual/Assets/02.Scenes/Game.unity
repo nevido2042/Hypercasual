@@ -7730,18 +7730,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4311190142443230714, guid: 654f8dfd5f6c53d458982d654c7eeb42, type: 3}
   m_PrefabInstance: {fileID: 1071256849}
   m_PrefabAsset: {fileID: 0}
---- !u!134 &1078421302
-PhysicMaterial:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: ' (Instance)'
-  dynamicFriction: 0.6
-  staticFriction: 0.6
-  bounciness: 0
-  frictionCombine: 0
-  bounceCombine: 0
 --- !u!1001 &1078776982
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11966,6 +11954,7 @@ MonoBehaviour:
   maxRequired: 5
   moveSpeed: 5
   spawnInterval: 2
+  exitOffsetRange: 0.3
   autoSpawn: 1
 --- !u!4 &1720664070
 Transform:
@@ -13627,6 +13616,18 @@ PhysicMaterial:
   bounciness: 0
   frictionCombine: 0
   bounceCombine: 0
+--- !u!134 &2073626306
+PhysicMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ' (Instance) (Instance)'
+  dynamicFriction: 0.6
+  staticFriction: 0.6
+  bounciness: 0
+  frictionCombine: 0
+  bounceCombine: 0
 --- !u!1001 &2074231005
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14448,7 +14449,7 @@ PrefabInstance:
     - target: {fileID: 7136658941593282026, guid: b4f0a436eee6c5e45ada95960ff61e5a, type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 1078421302}
+      objectReference: {fileID: 2073626306}
     - target: {fileID: 8043462225635512772, guid: b4f0a436eee6c5e45ada95960ff61e5a, type: 3}
       propertyPath: joystick
       value: 

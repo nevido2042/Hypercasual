@@ -54,8 +54,8 @@ namespace Hero
             if (anim != null)
             {
                 // 실제 이동 중일 때만 Run 애니메이션 활성화
-                bool isMoving = agent.velocity.magnitude > 0.1f && !agent.isStopped;
-                anim.SetBool(moveSpeedParam, isMoving);
+                float currentSpeed = agent.velocity.magnitude;
+                anim.SetFloat(moveSpeedParam, currentSpeed);
             }
 
             if (isMining)
