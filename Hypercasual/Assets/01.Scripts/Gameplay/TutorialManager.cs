@@ -35,11 +35,20 @@ namespace Hero
         [SerializeField] private JailController jailController;
         [SerializeField] private JailUpgradeZone jailUpgradeZone;
 
+        public Transform MiningArea => miningArea;
+        public Transform GemstoneDeliveryZone => gemstoneDeliveryZone;
+        public Transform HandcuffsStackZone => handcuffsStackZone;
+        public Transform HandcuffsDeliveryZone => handcuffsDeliveryZone;
+        public Transform MoneyStackZone => moneyStackZone;
+
         private PlayerStack playerStack;
         private FollowTarget followTarget; // 카메라 컨트롤러 참조
         private TutorialStep currentStep = TutorialStep.Mining;
         private bool isTransitioning = false;
-        private Vector3 upgradeZoneOriginalScale = Vector3.one; // 추가: 원래 스케일 저장
+        private Vector3 upgradeZoneOriginalScale = Vector3.one;
+
+        public event System.Action<TutorialStep> OnStepChanged;
+        public event System.Action<Transform, float, System.Action> OnCameraFocusRequest;
 
         private void Start()
         {
@@ -85,10 +94,10 @@ namespace Hero
             if (jailUpgradeZone != null)
             {
                 jailUpgradeZone.gameObject.SetActive(false);
-                // JailController에서 수동으로 활성화하므로 여기서는 구독하지 않음 (기존 연출 보존)
             }
 
-            UpdateMarker();
+            // 초기 단계 알림
+            DOVirtual.DelayedCall(0.1f, () => OnStepChanged?.Invoke(currentStep)).SetLink(gameObject);
         }
 
         private void TryNextStep(TutorialStep requiredStep)
@@ -115,7 +124,7 @@ namespace Hero
             
             currentStep++;
             isTransitioning = false;
-            UpdateMarker();
+            OnStepChanged?.Invoke(currentStep);
         }
 
         /// <summary>
@@ -128,17 +137,18 @@ namespace Hero
 
             yield return new WaitForSeconds(1.0f);
 
-            // 1. 마커 숨기기
-            if (marker != null) marker.Hide();
-
-            // 2. 카메라 타겟을 업그레이드 존으로 이동
-            Transform playerTF = playerStack != null ? playerStack.transform : null;
-            if (followTarget != null && miningUpgradeZone != null)
+            // 2. 카메라 연출 요청 (포커싱 -> 2초 대기 -> 복구 콜백)
+            if (miningUpgradeZone != null)
             {
-                followTarget.SetTarget(miningUpgradeZone.transform);
+                OnCameraFocusRequest?.Invoke(miningUpgradeZone.transform, 2.0f, () => {
+                    // 연출 종료 후 처리
+                    currentStep = TutorialStep.Complete;
+                    isTransitioning = false;
+                    OnStepChanged?.Invoke(currentStep);
+                });
             }
 
-            // 3. 업그레이드 존 활성화 및 연출
+            // 3. 업그레이드 존 활성화 및 연출 (시각적 로직만 남김)
             if (miningUpgradeZone != null)
             {
                 miningUpgradeZone.gameObject.SetActive(true);
@@ -146,66 +156,8 @@ namespace Hero
                 miningUpgradeZone.transform.localScale = Vector3.zero;
                 miningUpgradeZone.transform.DOScale(upgradeZoneOriginalScale, 0.8f).SetEase(Ease.OutBack).SetLink(miningUpgradeZone.gameObject);
             }
-
-            // 4. 연출 감상 대기 (2초)
-            yield return new WaitForSeconds(2.0f);
-
-            // 5. 카메라 타겟을 다시 플레이어로 복구
-            if (followTarget != null && playerTF != null)
-            {
-                followTarget.SetTarget(playerTF);
-            }
-
-            // 6. 튜토리얼 종료
-            currentStep = TutorialStep.Complete;
-            isTransitioning = false;
-            UpdateMarker();
-            
-            Debug.Log("[Tutorial] All Sequences Finished!");
         }
 
-        private void UpdateMarker()
-        {
-            if (marker == null) return;
-
-            Transform target = null;
-            Vector3 offset = markerOffset;
-
-            switch (currentStep)
-            {
-                case TutorialStep.Mining:
-                    target = miningArea;
-                    // 채굴 구역은 중앙 오프셋 계산 적용
-                    RockGridGenerator grid = miningArea != null ? miningArea.GetComponent<RockGridGenerator>() : null;
-                    if (grid != null) offset += grid.CenterOffset;
-                    break;
-
-                case TutorialStep.GemstoneDelivery:
-                    target = gemstoneDeliveryZone;
-                    break;
-
-                case TutorialStep.HandcuffsStack:
-                    target = handcuffsStackZone;
-                    break;
-
-                case TutorialStep.HandcuffsDelivery:
-                    target = handcuffsDeliveryZone;
-                    break;
-
-                case TutorialStep.MoneyStack:
-                    target = moneyStackZone;
-                    break;
-
-                case TutorialStep.Complete:
-                    marker.Hide();
-                    Debug.Log("[Tutorial] All Steps Completed!");
-                    return;
-            }
-
-            if (target != null)
-                marker.SetTarget(target, offset);
-            else
-                marker.Hide();
-        }
+        // UpdateMarker 로직은 이제 TutorialMarker 내부로 이동함 (제거 대기)
     }
 }

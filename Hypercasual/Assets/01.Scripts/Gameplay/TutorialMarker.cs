@@ -19,6 +19,10 @@ namespace Hero
         private Vector3 _currentOffset;
         private float _floatingY; // 애니메이션으로 제어할 추가 높이값
         private Tween _floatTween;
+        private TutorialManager _manager;
+
+        // 마커 오프셋 설정 (기존 TutorialManager에 있던 값들을 여기로 이동하여 캡슐화)
+        [SerializeField] private Vector3 defaultOffset = new Vector3(0, 2.5f, 0);
 
         private void Awake()
         {
@@ -29,6 +33,56 @@ namespace Hero
                 r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 r.receiveShadows = false;
             }
+
+            _manager = Object.FindFirstObjectByType<TutorialManager>();
+        }
+
+        private void Start()
+        {
+            if (_manager != null)
+            {
+                _manager.OnStepChanged += UpdateStepMarker;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (_manager != null)
+            {
+                _manager.OnStepChanged -= UpdateStepMarker;
+            }
+        }
+
+        private void UpdateStepMarker(TutorialStep step)
+        {
+            Transform target = null;
+            Vector3 offset = defaultOffset;
+
+            switch (step)
+            {
+                case TutorialStep.Mining:
+                    target = _manager.MiningArea;
+                    RockGridGenerator grid = target != null ? target.GetComponent<RockGridGenerator>() : null;
+                    if (grid != null) offset += grid.CenterOffset;
+                    break;
+                case TutorialStep.GemstoneDelivery:
+                    target = _manager.GemstoneDeliveryZone;
+                    break;
+                case TutorialStep.HandcuffsStack:
+                    target = _manager.HandcuffsStackZone;
+                    break;
+                case TutorialStep.HandcuffsDelivery:
+                    target = _manager.HandcuffsDeliveryZone;
+                    break;
+                case TutorialStep.MoneyStack:
+                    target = _manager.MoneyStackZone;
+                    break;
+                case TutorialStep.Complete:
+                    Hide();
+                    return;
+            }
+
+            SetTarget(target, offset);
         }
 
         private void OnEnable()
