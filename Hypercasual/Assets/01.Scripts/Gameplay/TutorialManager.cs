@@ -29,7 +29,11 @@ namespace Hero
         [SerializeField] private Transform handcuffsStackZone;
         [SerializeField] private Transform handcuffsDeliveryZone;
         [SerializeField] private Transform moneyStackZone;
-        [SerializeField] private Transform miningUpgradeZone; // 추가: 업그레이드 존
+        [SerializeField] private MiningUpgradeZone miningUpgradeZone; 
+        [SerializeField] private MinerHireZone minerHireZone;
+        [SerializeField] private CrewHireZone crewHireZone;
+        [SerializeField] private JailController jailController;
+        [SerializeField] private JailUpgradeZone jailUpgradeZone;
 
         private PlayerStack playerStack;
         private FollowTarget followTarget; // 카메라 컨트롤러 참조
@@ -55,11 +59,33 @@ namespace Hero
                 playerStack.OnMoneyAdded += () => TryNextStep(TutorialStep.MoneyStack);
             }
 
-            // 시작 시 업그레이드 존은 비활성화 상태여야 함 (수동 설정 가능성 대비)
+            // 시작 시 업그레이드 존들은 비활성화 상태여야 함
             if (miningUpgradeZone != null)
             {
-                upgradeZoneOriginalScale = miningUpgradeZone.localScale;
+                upgradeZoneOriginalScale = miningUpgradeZone.transform.localScale;
                 miningUpgradeZone.gameObject.SetActive(false);
+                miningUpgradeZone.OnFirstUpgrade += () => {
+                    if (minerHireZone != null) minerHireZone.gameObject.SetActive(true);
+                };
+            }
+
+            if (minerHireZone != null)
+            {
+                minerHireZone.gameObject.SetActive(false);
+                minerHireZone.OnPaymentFinished += () => {
+                    if (crewHireZone != null) crewHireZone.gameObject.SetActive(true);
+                };
+            }
+
+            if (crewHireZone != null)
+            {
+                crewHireZone.gameObject.SetActive(false);
+            }
+
+            if (jailUpgradeZone != null)
+            {
+                jailUpgradeZone.gameObject.SetActive(false);
+                // JailController에서 수동으로 활성화하므로 여기서는 구독하지 않음 (기존 연출 보존)
             }
 
             UpdateMarker();
@@ -109,16 +135,16 @@ namespace Hero
             Transform playerTF = playerStack != null ? playerStack.transform : null;
             if (followTarget != null && miningUpgradeZone != null)
             {
-                followTarget.SetTarget(miningUpgradeZone);
+                followTarget.SetTarget(miningUpgradeZone.transform);
             }
 
             // 3. 업그레이드 존 활성화 및 연출
             if (miningUpgradeZone != null)
             {
                 miningUpgradeZone.gameObject.SetActive(true);
-                miningUpgradeZone.DOKill();
-                miningUpgradeZone.localScale = Vector3.zero;
-                miningUpgradeZone.DOScale(upgradeZoneOriginalScale, 0.8f).SetEase(Ease.OutBack).SetLink(miningUpgradeZone.gameObject);
+                miningUpgradeZone.transform.DOKill();
+                miningUpgradeZone.transform.localScale = Vector3.zero;
+                miningUpgradeZone.transform.DOScale(upgradeZoneOriginalScale, 0.8f).SetEase(Ease.OutBack).SetLink(miningUpgradeZone.gameObject);
             }
 
             // 4. 연출 감상 대기 (2초)

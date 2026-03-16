@@ -50,6 +50,8 @@ namespace Hero
             GameObject mainCam = GameObject.FindWithTag("MainCamera");
             if (mainCam != null) followTarget = mainCam.GetComponent<FollowTarget>();
 
+            if (jailUpgradeZone != null) jailUpgradeZone.gameObject.SetActive(false);
+
             UpdateCountText();
         }
 
@@ -180,6 +182,7 @@ namespace Hero
             
             if (followTarget != null && jailUpgradeZone != null)
             {
+                jailUpgradeZone.gameObject.SetActive(true);
                 followTarget.SetTarget(jailUpgradeZone);
             }
 

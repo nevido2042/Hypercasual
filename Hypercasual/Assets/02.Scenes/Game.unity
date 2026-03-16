@@ -1680,6 +1680,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4311190142443230714, guid: 654f8dfd5f6c53d458982d654c7eeb42, type: 3}
   m_PrefabInstance: {fileID: 332616352}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &332853620 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1743056429551141086, guid: 6b210af17349f1844a96556b96d425f8, type: 3}
+  m_PrefabInstance: {fileID: 6494416000452712622}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bdd45d58f77a2e4a9ee2745f0d2e934, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &345578111
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3810,7 +3821,11 @@ MonoBehaviour:
   handcuffsStackZone: {fileID: 23908484}
   handcuffsDeliveryZone: {fileID: 945980067}
   moneyStackZone: {fileID: 1522892335}
-  miningUpgradeZone: {fileID: 18533541}
+  miningUpgradeZone: {fileID: 332853620}
+  minerHireZone: {fileID: 218266108}
+  crewHireZone: {fileID: 611542204}
+  jailController: {fileID: 9185527974810141902}
+  jailUpgradeZone: {fileID: 1482441791}
 --- !u!4 &620358878
 Transform:
   m_ObjectHideFlags: 0
@@ -8998,6 +9013,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4311190142443230714, guid: 654f8dfd5f6c53d458982d654c7eeb42, type: 3}
   m_PrefabInstance: {fileID: 1482032733}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1482441791 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1307417344775230986, guid: 0acb468fb907eca43b0f59832ce11817, type: 3}
+  m_PrefabInstance: {fileID: 9185527974810141899}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a61f7971ac2477498a4977de1e973e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1485282845
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -12,6 +12,8 @@ namespace Hero
         [SerializeField] private int maxUpgradeLevel = 3;
         private int currentUpgradeCount = 0;
 
+        public event System.Action OnFirstUpgrade;
+
         private PlayerMining playerMining;
 
         protected override void Awake()
@@ -40,6 +42,12 @@ namespace Hero
             if (progressFill != null)
             {
                 progressFill.transform.DOPunchScale(Vector3.one * 0.2f, 0.3f).SetLink(progressFill.gameObject);
+            }
+
+            // 1번이라도 업그레이드하면 이벤트 발생
+            if (currentUpgradeCount == 1)
+            {
+                OnFirstUpgrade?.Invoke();
             }
 
             if (currentUpgradeCount >= maxUpgradeLevel)

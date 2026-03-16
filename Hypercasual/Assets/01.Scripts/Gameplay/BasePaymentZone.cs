@@ -25,6 +25,8 @@ namespace Hero
         protected Material markerMaterial;
         protected bool isCompleted = false;
 
+        public event System.Action OnPaymentFinished;
+
         protected virtual void Awake()
         {
             // UI 참조 자동 탐색
@@ -104,6 +106,7 @@ namespace Hero
                     {
                         isCompleted = true;
                         OnPaymentComplete();
+                        OnPaymentFinished?.Invoke();
                         yield break;
                     }
 
