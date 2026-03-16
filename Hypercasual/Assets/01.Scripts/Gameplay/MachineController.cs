@@ -20,7 +20,18 @@ namespace Hero
         [SerializeField] private float productionTime = 1.5f;       // 생산 소요 시간
         [SerializeField] private float checkInterval = 0.5f;        // 젬스톤 유무 확인 간격
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip productionSound;
+        private AudioSource _audioSource;
+
         private bool isWorking = false;
+
+        void Awake()
+        {
+            _audioSource = GetComponent<AudioSource>();
+            if (_audioSource == null) _audioSource = gameObject.AddComponent<AudioSource>();
+            _audioSource.playOnAwake = false;
+        }
 
         void Start()
         {
@@ -72,6 +83,12 @@ namespace Hero
                     product.transform.DOScale(Vector3.one, 0.3f)
                         .SetEase(Ease.OutBack)
                         .SetLink(product);
+
+                    // 효과음 출력
+                    if (_audioSource != null && productionSound != null)
+                    {
+                        _audioSource.PlayOneShot(productionSound);
+                    }
                     
                     // 제품 출구 방향으로 살짝 밀어내거나 컨베이어 타게 함
                     if (outputZone != null)

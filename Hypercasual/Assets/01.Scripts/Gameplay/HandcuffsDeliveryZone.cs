@@ -20,6 +20,7 @@ namespace Hero
 
         [Header("Settings")]
         [SerializeField] private float receiveInterval = 0.15f;
+        [SerializeField] private float exitGraceTime = 0.5f;
         
         [Header("Visuals")]
         [SerializeField] private MeshRenderer markerRenderer;
@@ -27,8 +28,10 @@ namespace Hero
         [SerializeField] private Color inactiveColor = Color.gray;
 
         private Coroutine consumeCoroutine;
+        private Coroutine exitDelayCoroutine;
         private IHandcuffProvider currentProvider;
         private Material markerMaterial;
+        private System.Collections.Generic.HashSet<Collider> _activeColliders = new System.Collections.Generic.HashSet<Collider>();
 
         void Awake()
         {
@@ -44,24 +47,59 @@ namespace Hero
             IHandcuffProvider provider = other.GetComponentInParent<IHandcuffProvider>();
             if (provider != null)
             {
-                currentProvider = provider;
-                SetColor(activeColor);
-                Debug.Log($"[HandcuffsDeliveryZone] Provider detected: {other.gameObject.name} (Parent: {other.transform.parent?.name})");
+                // 이미 추적 중인 콜라이더면 무시
+                if (_activeColliders.Contains(other)) return;
+                
+                _activeColliders.Add(other);
 
-                // ConsumeZone에 배달자 도착 알림
-                if (consumeZone != null) consumeZone.SetDelivererInZone(true);
+                // 퇴장 대기 중이었다면 취소
+                if (exitDelayCoroutine != null)
+                {
+                    StopCoroutine(exitDelayCoroutine);
+                    exitDelayCoroutine = null;
+                    Debug.Log($"[HandcuffsDeliveryZone] Exit cancelled due to re-entry: {other.gameObject.name}");
+                    return;
+                }
 
-                if (consumeCoroutine != null) StopCoroutine(consumeCoroutine);
-                consumeCoroutine = StartCoroutine(ConsumeRoutine());
+                // 첫 번째 콜라이더 진입 시에만 초기화 및 코루틴 시작
+                if (currentProvider == null)
+                {
+                    currentProvider = provider;
+                    SetColor(activeColor);
+                    Debug.Log($"[HandcuffsDeliveryZone] Provider detected: {other.gameObject.name} (Parent: {other.transform.parent?.name})");
+
+                    // ConsumeZone에 배달자 도착 알림
+                    if (consumeZone != null) consumeZone.SetDelivererInZone(true);
+
+                    if (consumeCoroutine != null) StopCoroutine(consumeCoroutine);
+                    consumeCoroutine = StartCoroutine(ConsumeRoutine());
+                }
             }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            IHandcuffProvider provider = other.GetComponentInParent<IHandcuffProvider>();
-            if (provider != null && provider == currentProvider)
+            if (_activeColliders.Contains(other))
             {
-                Debug.Log($"[HandcuffsDeliveryZone] Provider left: {other.gameObject.name}");
+                _activeColliders.Remove(other);
+
+                // 모든 콜라이더가 구역을 완전히 빠져나갔을 때만 해제 프로세스 시작 (유예 시간 적용)
+                if (_activeColliders.Count == 0 && gameObject.activeInHierarchy)
+                {
+                    if (exitDelayCoroutine != null) StopCoroutine(exitDelayCoroutine);
+                    exitDelayCoroutine = StartCoroutine(ExitDelayRoutine(other.gameObject.name));
+                }
+            }
+        }
+
+        private IEnumerator ExitDelayRoutine(string objectName)
+        {
+            yield return new WaitForSeconds(exitGraceTime);
+
+            // 유예 시간이 지났는데도 여전히 비어있다면 진짜 퇴장 처리
+            if (_activeColliders.Count == 0)
+            {
+                Debug.Log($"[HandcuffsDeliveryZone] Provider fully left after grace period: {objectName}");
                 SetColor(inactiveColor);
 
                 // ConsumeZone에 배달자 퇴장 알림
@@ -74,6 +112,8 @@ namespace Hero
                 }
                 currentProvider = null;
             }
+            
+            exitDelayCoroutine = null;
         }
 
         private IEnumerator ConsumeRoutine()

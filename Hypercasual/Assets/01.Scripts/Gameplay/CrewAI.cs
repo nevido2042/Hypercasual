@@ -32,6 +32,7 @@ namespace Hero
         private AIState currentState = AIState.Idle;
         private List<Transform> hcStack = new List<Transform>();
         private bool isInDeliveryZone = false;
+        private bool isInStackZone = false;
 
         private void SetState(AIState newState)
         {
@@ -125,17 +126,23 @@ namespace Hero
 
         private IEnumerator ActionTakeFromStack()
         {
+            if (stackZone == null) yield break;
             SetState(AIState.MovingToStack);
             agent.SetDestination(stackZone.transform.position);
-            while (Vector3.Distance(transform.position, stackZone.transform.position) > arrivalDistance)
+            
+            // 트리거가 먼저 닿거나 거리가 가까워지면 진입
+            while (!isInStackZone && Vector3.Distance(transform.position, stackZone.transform.position) > arrivalDistance)
             {
                 if (stackZone == null || !stackZone.HasProducts) yield break;
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(0.1f);
             }
             
+            Debug.Log($"[CrewAI] Reached StackZone. Starting to take products.");
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero; // 물리적 관성 제거 및 즉각 정지
+
             while (stackZone.HasProducts && hcStack.Count < maxCapacity)
             {
-                agent.isStopped = true;
                 Transform item = stackZone.TakeProduct();
                 if (item != null) AddToFrontStack(item);
                 yield return new WaitForSeconds(0.1f);
@@ -153,14 +160,15 @@ namespace Hero
             {
                 if (!isInDeliveryZone)
                 {
-                    yield return new WaitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.1f);
                 }
                 else
                 {
                     // 딜리버리 존에 도착함. 
-                    Debug.Log($"[CrewAI] Reached DeliveryZone via Trigger.");
+                    Debug.Log($"[CrewAI] Reached DeliveryZone via Trigger. Stopping agent.");
                     // 1) 들고 있는 수갑이 있거나 2) 소모존에 수갑이 있고 죄수가 있는 동안 대기하며 배달 활성화
                     agent.isStopped = true;
+                    agent.velocity = Vector3.zero; // 물리적 관성 제거
                     yield return new WaitUntil(() => 
                         (hcStack.Count == 0 && (consumeZone == null || !consumeZone.HasHandcuffs() || !consumeZone.IsPrisonerWaiting())) || 
                         !isInDeliveryZone);
@@ -183,6 +191,10 @@ namespace Hero
             {
                 isInDeliveryZone = true;
             }
+            else if (other.GetComponent<HandcuffsStackZone>() != null)
+            {
+                isInStackZone = true;
+            }
         }
 
         private void OnTriggerExit(Collider other)
@@ -190,6 +202,10 @@ namespace Hero
             if (other.GetComponent<HandcuffsDeliveryZone>() != null)
             {
                 isInDeliveryZone = false;
+            }
+            else if (other.GetComponent<HandcuffsStackZone>() != null)
+            {
+                isInStackZone = false;
             }
         }
 

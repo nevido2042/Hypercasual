@@ -19,6 +19,10 @@ namespace Hero
         protected TMP_Text progressText;
         protected Image progressFill;
 
+        [Header("Audio")]
+        [SerializeField] protected AudioClip completeSound;
+        protected AudioSource audioSource;
+
         protected int currentCash = 0;
         protected Coroutine payCoroutine;
         protected PlayerStack playerStack;
@@ -39,6 +43,10 @@ namespace Hero
                 progressFill.fillMethod = Image.FillMethod.Vertical;
                 progressFill.fillAmount = 0;
             }
+
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
 
             UpdateUI();
         }
@@ -105,6 +113,13 @@ namespace Hero
                     if (currentCash >= targetCash)
                     {
                         isCompleted = true;
+                        
+                        // 완료 효과음 출력
+                        if (audioSource != null && completeSound != null)
+                        {
+                            audioSource.PlayOneShot(completeSound);
+                        }
+
                         OnPaymentComplete();
                         OnPaymentFinished?.Invoke();
                         yield break;

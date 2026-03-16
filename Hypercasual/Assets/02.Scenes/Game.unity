@@ -232,11 +232,12 @@ Transform:
   m_GameObject: {fileID: 23908478}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.300003, z: 0}
-  m_LocalScale: {x: 0.2, y: 1, z: 0.2}
+  m_LocalPosition: {x: 65.355316, y: 67.31099, z: -28.642746}
+  m_LocalScale: {x: 0.1, y: 0.5, z: 0.1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4587916532612024588}
+  m_Children:
+  - {fileID: 4587916532612024588}
+  m_Father: {fileID: 897188789}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &23908485
 BoxCollider:
@@ -257,7 +258,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 10, y: 1, z: 10}
+  m_Size: {x: 15, y: 1, z: 15}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &30171395
 PrefabInstance:
@@ -1126,6 +1127,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetCash: 5
   payInterval: 0.2
+  completeSound: {fileID: 8300000, guid: 14d429d8586a82b49a85e7882264fe99, type: 3}
   minerSpawnCount: 3
   minerPrefab: {fileID: 5292298072710245316, guid: 02019fb61b3260e4a907e570751d3860, type: 3}
   spawnPoint: {fileID: 0}
@@ -3720,6 +3722,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetCash: 10
   payInterval: 0.2
+  completeSound: {fileID: 8300000, guid: 14d429d8586a82b49a85e7882264fe99, type: 3}
   crewSpawnCount: 1
   crewPrefab: {fileID: 1495661155842154727, guid: 8e72d67aa4351dc48a6e4052ceddf019, type: 3}
   spawnPoint: {fileID: 0}
@@ -5241,7 +5244,7 @@ Transform:
   - {fileID: 301198613}
   - {fileID: 1539593468}
   - {fileID: 462493930}
-  - {fileID: 4587916532612024588}
+  - {fileID: 23908484}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &899082343
@@ -5865,6 +5868,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   consumeZone: {fileID: 2094264607}
   receiveInterval: 0.01
+  exitGraceTime: 0.5
   markerRenderer: {fileID: 945980064}
   activeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
@@ -7669,6 +7673,7 @@ MonoBehaviour:
   outputPoint: {fileID: 1539593468}
   productionTime: 0.5
   checkInterval: 0.5
+  productionSound: {fileID: 8300000, guid: 06e4609178e03c34b99df6db6ed9801d, type: 3}
 --- !u!1001 &1298229989
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13585,12 +13590,11 @@ Transform:
   m_GameObject: {fileID: 3810148002317407158}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 65.355316, y: 66.66099, z: -28.642746}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalPosition: {x: 0, y: -1.300003, z: 0}
+  m_LocalScale: {x: 5, y: 1, z: 5}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 23908484}
-  m_Father: {fileID: 897188789}
+  m_Children: []
+  m_Father: {fileID: 23908484}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4621448243391203506
 GameObject:
@@ -14020,6 +14024,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 539947706}
     m_Modifications:
+    - target: {fileID: 1743056429551141086, guid: 6b210af17349f1844a96556b96d425f8, type: 3}
+      propertyPath: completeSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 14d429d8586a82b49a85e7882264fe99, type: 3}
     - target: {fileID: 1743056429551141086, guid: 6b210af17349f1844a96556b96d425f8, type: 3}
       propertyPath: maxUpgradeLevel
       value: 2
@@ -14622,6 +14630,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1307417344775230986, guid: 0acb468fb907eca43b0f59832ce11817, type: 3}
+      propertyPath: completeSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 14d429d8586a82b49a85e7882264fe99, type: 3}
     - target: {fileID: 4163464366337810652, guid: 0acb468fb907eca43b0f59832ce11817, type: 3}
       propertyPath: m_Name
       value: Jail
