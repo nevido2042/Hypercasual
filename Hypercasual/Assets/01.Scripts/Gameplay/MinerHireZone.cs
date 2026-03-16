@@ -4,26 +4,26 @@ using DG.Tweening;
 namespace Hero
 {
     /// <summary>
-    /// 현금을 지불하여 크루를 고용하는 구역
+    /// 현금을 지불하여 광부를 고용하는 구역
     /// </summary>
-    public class CrewHireZone : BasePaymentZone
+    public class MinerHireZone : BasePaymentZone
     {
         [Header("Hire Specific Settings")]
-        [SerializeField] private int crewSpawnCount = 1;
-        [SerializeField] private GameObject crewPrefab;
+        [SerializeField] private int minerSpawnCount = 3;
+        [SerializeField] private GameObject minerPrefab;
         [SerializeField] private Transform spawnPoint;
 
         protected override void OnPaymentComplete()
         {
-            for (int i = 0; i < crewSpawnCount; i++)
+            for (int i = 0; i < minerSpawnCount; i++)
             {
                 Vector3 spawnPos = spawnPoint != null ? spawnPoint.position : transform.position;
                 spawnPos += new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
                 
-                if (crewPrefab != null)
+                if (minerPrefab != null)
                 {
-                    GameObject crew = Instantiate(crewPrefab, spawnPos, Quaternion.identity);
-                    crew.transform.DOPunchScale(Vector3.one * 0.3f, 0.5f).SetLink(crew);
+                    GameObject miner = Instantiate(minerPrefab, spawnPos, Quaternion.identity);
+                    miner.transform.DOPunchScale(Vector3.one * 0.3f, 0.5f).SetLink(miner);
                 }
             }
 
