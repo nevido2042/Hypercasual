@@ -16,6 +16,16 @@ namespace Hero
         [SerializeField] private float animationDuration = 0.6f;
         [SerializeField] private int maxCapacity = 20;
 
+        public int MaxCapacity 
+        { 
+            get => maxCapacity; 
+            set 
+            { 
+                maxCapacity = value; 
+                UpdateCountText();
+            } 
+        }
+
         private int prisonerCount = 0;
         private float closedY;
         private bool isDoorOpen = false;
