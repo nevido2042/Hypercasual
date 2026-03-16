@@ -24,6 +24,10 @@ namespace Hero
         [SerializeField] private float moneyVerticalSpacing = 0.07f; // 현금 전용 수직 간격 (기존의 약 1/3)
         private List<Transform> moneyStack = new List<Transform>();
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip stackSound;
+        private AudioSource _audioSource;
+
         public int GemstoneCount => stackList.Count;
         public int HandcuffCount => handcuffsStack.Count;
         public int MoneyCount => moneyStack.Count;
@@ -57,6 +61,13 @@ namespace Hero
         private Vector3 lastPosition;
         private Vector3 currentVelocity;
         private Vector2 smoothLean;
+
+        private void Awake()
+        {
+            _audioSource = GetComponent<AudioSource>();
+            if (_audioSource == null) _audioSource = gameObject.AddComponent<AudioSource>();
+            _audioSource.playOnAwake = false;
+        }
 
         void Start()
         {
@@ -224,6 +235,8 @@ namespace Hero
         {
             if (stackList.Count == 0) return null;
 
+            if (_audioSource != null && stackSound != null) _audioSource.PlayOneShot(stackSound);
+
             int lastIndex = stackList.Count - 1;
             Transform lastGem = stackList[lastIndex];
             stackList.RemoveAt(lastIndex);
@@ -237,6 +250,8 @@ namespace Hero
 
         public void AddToFrontStack(Transform item)
         {
+            if (_audioSource != null && stackSound != null) _audioSource.PlayOneShot(stackSound);
+
             Transform parent = handcuffsStack.Count == 0 ? frontStackPoint : handcuffsStack[handcuffsStack.Count - 1];
             Vector3 targetLocalPos = handcuffsStack.Count == 0 ? Vector3.zero : new Vector3(0, frontVerticalSpacing, 0);
 
@@ -261,6 +276,8 @@ namespace Hero
         {
             if (handcuffsStack.Count == 0) return null;
 
+            if (_audioSource != null && stackSound != null) _audioSource.PlayOneShot(stackSound);
+
             int lastIndex = handcuffsStack.Count - 1;
             Transform item = handcuffsStack[lastIndex];
             handcuffsStack.RemoveAt(lastIndex);
@@ -271,6 +288,8 @@ namespace Hero
 
         public void AddToMoneyStack(Transform money)
         {
+            if (_audioSource != null && stackSound != null) _audioSource.PlayOneShot(stackSound);
+
             // 수집되기 전의 월드 스케일을 기억 (보이는 크기 고정)
             Vector3 worldScaleBefore = money.lossyScale;
 
@@ -315,6 +334,8 @@ namespace Hero
         public Transform RemoveFromMoneyStack()
         {
             if (moneyStack.Count == 0) return null;
+
+            if (_audioSource != null && stackSound != null) _audioSource.PlayOneShot(stackSound);
 
             int lastIndex = moneyStack.Count - 1;
             Transform item = moneyStack[lastIndex];

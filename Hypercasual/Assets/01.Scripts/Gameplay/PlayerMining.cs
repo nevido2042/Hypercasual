@@ -18,6 +18,11 @@ namespace Hero
         [SerializeField] private GameObject miningTool;        // 손에 들 곡괭이 오브젝트
         [SerializeField] private GameObject drillPrefab;       // 업그레이드용 드릴 프리팹
         [SerializeField] private GameObject drillCarPrefab;    // 업그레이드용 드릴카 프리팹
+
+        [Header("오디오 설정")]
+        [SerializeField] private AudioClip miningSound;        // 채광 사운드 (Mining.wav)
+        
+        private AudioSource audioSource;
         
         public bool IsMining => isMining;
         public bool IsDrillUpgraded => upgradeTier >= 1; // 1단계 이상(드릴/드릴카) 여부
@@ -41,6 +46,11 @@ namespace Hero
 
             // 시작 시 곡괭이 비활성화
             if (miningTool != null) miningTool.SetActive(false);
+
+            // 오디오 소스 설정
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
         }
 
         void Start()
@@ -137,6 +147,12 @@ namespace Hero
         /// </summary>
         public void PerformMiningHit()
         {
+            // 사운드 재생
+            if (audioSource != null && miningSound != null)
+            {
+                audioSource.PlayOneShot(miningSound);
+            }
+
             // 드릴/드릴카 업그레이드 완료 후에는 DrillHead가 직접 채굴하므로 무시함
             if (upgradeTier >= 1) return;
 

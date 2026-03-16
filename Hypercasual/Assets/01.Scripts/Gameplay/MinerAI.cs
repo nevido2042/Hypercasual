@@ -21,6 +21,11 @@ namespace Hero
         public string miningAnimParam = "IsMining";
         public string moveSpeedParam = "Run";
 
+        [Header("Audio")]
+        public AudioClip miningSound;
+        private AudioSource audioSource;
+        private Camera _mainCam;
+
         private NavMeshAgent agent;
         private Animator anim;
         private MineableRock targetRock;
@@ -42,10 +47,15 @@ namespace Hero
 
             // 곡괭이를 항상 켜둠
             if (miningTool != null) miningTool.SetActive(true);
+
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
         }
 
         private void Start()
         {
+            _mainCam = Camera.main;
             StartCoroutine(BehaviorRoutine());
         }
 
@@ -68,6 +78,10 @@ namespace Hero
 
                 if (Time.time >= nextMineTime)
                 {
+                    if (audioSource != null && miningSound != null && IsOnScreen())
+                    {
+                        audioSource.PlayOneShot(miningSound);
+                    }
                     targetRock.Mine(gameObject);
                     nextMineTime = Time.time + mineInterval;
                 }
@@ -151,6 +165,16 @@ namespace Hero
             agent.isStopped = false;
             if (anim != null) anim.SetBool(miningAnimParam, false);
             if (miningTool != null) miningTool.SetActive(false);
+        }
+
+        private bool IsOnScreen()
+        {
+            if (_mainCam == null) _mainCam = Camera.main;
+            if (_mainCam == null) return false;
+
+            Vector3 viewportPos = _mainCam.WorldToViewportPoint(transform.position);
+            // 뷰포트 좌표가 x(0~1), y(0~1) 사이에 있고 z가 양수(카메라 앞)이면 화면 안임
+            return viewportPos.z > 0 && viewportPos.x >= 0 && viewportPos.x <= 1 && viewportPos.y >= 0 && viewportPos.y <= 1;
         }
     }
 }

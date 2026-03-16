@@ -1249,7 +1249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11eebe845a14cab4b96c30aa34be6eb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unloadInterval: 0.1
+  unloadInterval: 0.01
   stackSpacing: 0.5
   stackHeight: 0.2
   stackContainer: {fileID: 0}
@@ -12373,7 +12373,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9105e22cada7c3641bf800229a490d74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollSpeed: {x: 0, y: 1}
+  scrollSpeed: {x: 0, y: 3}
   texturePropertyName: _BaseMap
 --- !u!1 &2094264601
 GameObject:
@@ -12435,6 +12435,7 @@ MonoBehaviour:
   distributeInterval: 0.2
   stackJumpDuration: 0.3
   stackPopDuration: 0.3
+  stackSound: {fileID: 8300000, guid: 02ccfee92678eee4f87e1e169d49858f, type: 3}
   jailController: {fileID: 9185527974810141902}
 --- !u!1001 &2107484948
 PrefabInstance:
@@ -12895,6 +12896,7 @@ MonoBehaviour:
   miningTool: {fileID: 687235709559417404}
   drillPrefab: {fileID: 6811695007546419425, guid: 700596ce15ce34d40875c51885bfac0e, type: 3}
   drillCarPrefab: {fileID: 1672686011654627075, guid: 64d90a257acf3ec47b1632b603a3de0b, type: 3}
+  miningSound: {fileID: 8300000, guid: 87100483dc4e2714f9581113ddd2a01d, type: 3}
 --- !u!114 &4305231772748583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12913,6 +12915,7 @@ MonoBehaviour:
   frontVerticalSpacing: 0.1
   moneyStackPoint: {fileID: 0}
   moneyVerticalSpacing: 0.03
+  stackSound: {fileID: 8300000, guid: 02ccfee92678eee4f87e1e169d49858f, type: 3}
   baseBackOffset: -0.45
   stackLineDistance: 0.35
   tiltSensitivity: 5

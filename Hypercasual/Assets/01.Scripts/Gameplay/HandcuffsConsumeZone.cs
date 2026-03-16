@@ -22,6 +22,10 @@ namespace Hero
         private float nextDistributeTime = 0f;
         private bool isDelivererInZone = false; // 플레이어 또는 크루 존재 여부
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip stackSound;
+        private AudioSource _audioSource;
+
         public void SetDelivererInZone(bool isInRange) => isDelivererInZone = isInRange;
         public bool HasHandcuffs() => consumedProducts.Count > 0;
         public int HandcuffCount => consumedProducts.Count;
@@ -57,6 +61,10 @@ namespace Hero
                 queueManager = FindFirstObjectByType<PrisonerQueueManager>();
                 if (queueManager != null) Debug.Log("[ConsumeZone] Successfully auto-assigned PrisonerQueueManager.");
             }
+
+            _audioSource = GetComponent<AudioSource>();
+            if (_audioSource == null) _audioSource = gameObject.AddComponent<AudioSource>();
+            _audioSource.playOnAwake = false;
         }
 
         void Update()
@@ -80,6 +88,8 @@ namespace Hero
         private void DistributeToPrisoner(Prisoner prisoner)
         {
             if (consumedProducts.Count == 0) return;
+
+            if (_audioSource != null && stackSound != null) _audioSource.PlayOneShot(stackSound);
 
             int lastIndex = consumedProducts.Count - 1;
             Transform item = consumedProducts[lastIndex];
@@ -106,6 +116,8 @@ namespace Hero
         /// </summary>
         public void ReceiveProduct(Transform item)
         {
+            if (_audioSource != null && stackSound != null) _audioSource.PlayOneShot(stackSound);
+
             consumedProducts.Add(item);
             int index = consumedProducts.Count - 1;
 

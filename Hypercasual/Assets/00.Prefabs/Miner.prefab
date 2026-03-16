@@ -789,6 +789,7 @@ MonoBehaviour:
   miningTool: {fileID: 7033575592763522584, guid: feba5822b5d4a15418f7dbb469e3bbb3, type: 3}
   miningAnimParam: IsMining
   moveSpeedParam: Run
+  miningSound: {fileID: 8300000, guid: 87100483dc4e2714f9581113ddd2a01d, type: 3}
 --- !u!1 &5472198416423154952
 GameObject:
   m_ObjectHideFlags: 0
