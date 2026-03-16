@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Hero
 {
@@ -34,8 +34,11 @@ namespace Hero
 
         void Update()
         {
-            GetInput(); // 입력 받기
+            GetInput(); // 입력 받기 (입력 누락 방지를 위해 Update 유지)
+        }
 
+        void FixedUpdate()
+        {
             // 입력이 거의 없으면 이동 로직 취소
             if (Mathf.Abs(input.x) < 0.3 && Mathf.Abs(input.y) < 0.3) return;
 
@@ -85,7 +88,7 @@ namespace Hero
                 targetRotation = Quaternion.Euler(0, angle, 0);
             }
 
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime);
         }
 
         /// <summary>
@@ -94,7 +97,7 @@ namespace Hero
         void Move()
         {
             float speedMultiplier = Mathf.Clamp01(input.magnitude);
-            transform.position += transform.forward * velocity * speedMultiplier * Time.deltaTime;
+            transform.position += transform.forward * velocity * speedMultiplier * Time.fixedDeltaTime;
         }
     }
 }
