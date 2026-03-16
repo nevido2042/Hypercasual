@@ -43,12 +43,19 @@ namespace Hero
         private const float JailEntryTimeout = 2f; // 감옥 진입 시 최대 대기 시간
         public bool HasEnteredJail { get; set; } = false;
 
+        private JailController jailController;
+
         public bool IsSatisfied => currentHandcuffs >= requiredHandcuffs;
         public int RemainingCount => Mathf.Max(0, requiredHandcuffs - currentHandcuffs);
 
         void Awake()
         {
             SetupComponents();
+        }
+
+        private void Start()
+        {
+            jailController = Object.FindFirstObjectByType<JailController>();
         }
 
         private void SetupComponents()
@@ -182,6 +189,14 @@ namespace Hero
                 }
                 else
                 {
+                    // 감옥이 꽉 찼다면 입소 시도 중인 죄수들은 멈춤
+                    if (isLeaving && jailController != null && jailController.IsFull)
+                    {
+                        rb.velocity = Vector3.zero;
+                        SetAnimationWalk(0f);
+                        return;
+                    }
+
                     // 물리 기반 속도 설정
                     rb.velocity = diff.normalized * moveSpeed;
                     

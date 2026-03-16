@@ -484,6 +484,37 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &2357710488378356674
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6106049232312891274}
+  m_Layer: 0
+  m_Name: ViewTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6106049232312891274
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2357710488378356674}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 985527140249831508}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2485707830558406343
 GameObject:
   m_ObjectHideFlags: 0
@@ -554,6 +585,7 @@ Transform:
   - {fileID: 4101024420369154848}
   - {fileID: 2370852777335959747}
   - {fileID: 7906091636362791166}
+  - {fileID: 6106049232312891274}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8375897200011867979
@@ -570,6 +602,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   doorTransform: {fileID: 8724782549744567730}
   prisonerCountText: {fileID: 4203783938572126760}
+  jailUpgradeZone: {fileID: 2370852777335959747}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  fullColor: {r: 1, g: 0, b: 0, a: 1}
   openYOffset: -2.5
   animationDuration: 0.6
   maxCapacity: 20
@@ -1027,7 +1062,7 @@ Transform:
   m_GameObject: {fileID: 7810089333345851787}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.98, y: 0, z: -0.0800004}
+  m_LocalPosition: {x: -2.43, y: 0, z: -1.68}
   m_LocalScale: {x: 0.1, y: 1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1078,6 +1113,7 @@ MonoBehaviour:
   - {fileID: 5128508600567835193}
   jailController: {fileID: 8375897200011867979}
   capacityMultiplier: 3
+  viewTarget: {fileID: 6106049232312891274}
 --- !u!1 &8495553905134563020
 GameObject:
   m_ObjectHideFlags: 0

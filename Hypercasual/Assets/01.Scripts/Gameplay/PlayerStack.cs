@@ -24,8 +24,16 @@ namespace Hero
         [SerializeField] private float moneyVerticalSpacing = 0.07f; // 현금 전용 수직 간격 (기존의 약 1/3)
         private List<Transform> moneyStack = new List<Transform>();
 
+        public int GemstoneCount => stackList.Count;
+        public int HandcuffCount => handcuffsStack.Count;
         public int MoneyCount => moneyStack.Count;
-        public System.Action OnMoneyStackChanged;
+
+        public System.Action OnGemstoneAdded;
+        public System.Action OnGemstoneRemoved;
+        public System.Action OnHandcuffAdded;
+        public System.Action OnHandcuffRemoved;
+        public System.Action OnMoneyAdded;
+        public System.Action OnMoneyStackChanged; // 하위 호환성 유지
         
         [Header("스택 배치 설정")]
         [SerializeField] private float baseBackOffset = -0.45f;    // 첫 번째 줄(젬스톤)의 Z 위치
@@ -184,6 +192,7 @@ namespace Hero
 
                 // 젬스톤이 생겼으므로 현금 줄 위치 체크
                 UpdateStackPositions();
+                OnGemstoneAdded?.Invoke();
             });
         }
 
@@ -221,6 +230,7 @@ namespace Hero
 
             // 젬스톤이 모두 사라졌는지 체크하여 현금 줄 위치 조정
             UpdateStackPositions();
+            OnGemstoneRemoved?.Invoke();
             
             return lastGem;
         }
@@ -244,6 +254,7 @@ namespace Hero
                 .SetLink(item.gameObject);
 
             handcuffsStack.Add(item);
+            OnHandcuffAdded?.Invoke();
         }
 
         public Transform RemoveFromFrontStack()
@@ -253,6 +264,7 @@ namespace Hero
             int lastIndex = handcuffsStack.Count - 1;
             Transform item = handcuffsStack[lastIndex];
             handcuffsStack.RemoveAt(lastIndex);
+            OnHandcuffRemoved?.Invoke();
             
             return item;
         }
@@ -290,6 +302,7 @@ namespace Hero
                 .SetLink(money.gameObject);
             
             moneyStack.Add(money);
+            OnMoneyAdded?.Invoke();
             OnMoneyStackChanged?.Invoke();
 
             // 스케일 연출

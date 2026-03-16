@@ -13,23 +13,49 @@ namespace Hero
         [SerializeField] private GameObject[] objectsToActivate; // 활성화될 오브젝트들 (확장 메쉬 등)
         [SerializeField] private JailController jailController;
         [SerializeField] private int capacityMultiplier = 3;
+        [SerializeField] private Transform viewTarget; // 업그레이드 전경을 비출 카메라 타겟
+
+        private FollowTarget followTarget;
+
+        private void Start()
+        {
+            // 메인 카메라의 FollowTarget 참조 미리 가져오기
+            GameObject mainCam = GameObject.FindWithTag("MainCamera");
+            if (mainCam != null) followTarget = mainCam.GetComponent<FollowTarget>();
+        }
 
         protected override void OnPaymentComplete()
         {
-            // 1. 기존 벽 제거
+            StartCoroutine(UpgradeSequence());
+        }
+
+        private System.Collections.IEnumerator UpgradeSequence()
+        {
+            Debug.Log("[JailUpgradeZone] Payment complete! Starting upgrade sequence...");
+
+            // 1. 카메라 타겟 변경
+            if (followTarget != null && viewTarget != null)
+            {
+                followTarget.SetTarget(viewTarget);
+            }
+
+            // 2. 1초 대기 (긴장감)
+            yield return new WaitForSeconds(1.0f);
+
+            // 3. 기존 업그레이드 로직 실행
+            // 기존 벽 제거
             if (originalWall != null)
             {
                 originalWall.SetActive(false);
             }
 
-            // 2. 등록된 오브젝트들 활성화 및 연출 (Pop 효과)
+            // 등록된 오브젝트들 활성화 및 연출 (Pop 효과)
             if (objectsToActivate != null)
             {
                 foreach (var obj in objectsToActivate)
                 {
                     if (obj == null) continue;
 
-                    // 팝 연출 적용
                     Vector3 targetScale = obj.transform.localScale;
                     obj.SetActive(true);
                     
@@ -41,7 +67,7 @@ namespace Hero
                 }
             }
 
-            // 3. 수용량 증설
+            // 수용량 증설
             if (jailController != null)
             {
                 int newCapacity = jailController.MaxCapacity * capacityMultiplier;
@@ -49,7 +75,18 @@ namespace Hero
                 Debug.Log($"[JailUpgradeZone] Jail Expanded! New Capacity: {newCapacity}");
             }
 
-            // 4. 업그레이드 구역 비활성화
+            // 4. 연출 감상 대기 (2초)
+            yield return new WaitForSeconds(2.0f);
+
+            // 5. 카메라 복구 (플레이어 찾기)
+            if (followTarget != null)
+            {
+                PlayerStack player = Object.FindFirstObjectByType<PlayerStack>();
+                if (player != null) followTarget.SetTarget(player.transform);
+            }
+
+            // 6. 업그레이드 구역 비활성화
+            transform.DOKill();
             transform.DOScale(Vector3.zero, 0.5f)
                 .SetEase(Ease.InBack)
                 .SetLink(gameObject)

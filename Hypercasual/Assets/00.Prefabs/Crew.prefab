@@ -338,9 +338,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stackZone: {fileID: 0}
   consumeZone: {fileID: 0}
-  queueManager: {fileID: 0}
+  deliveryZone: {fileID: 0}
   carryPoint: {fileID: 0}
+  frontStackPoint: {fileID: 0}
   arrivalDistance: 1
+  verticalSpacing: 0.1
+  maxCapacity: 20
   moveAnimParam: Run
 --- !u!1 &1551183082928055925
 GameObject:

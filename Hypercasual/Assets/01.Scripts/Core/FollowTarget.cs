@@ -13,6 +13,8 @@ namespace Hero
         [SerializeField] private float turnSpeed = 10;    // 회전 속도
         [SerializeField] private float smoothSpeed = 0.5f; // 부드러운 전환 속도
 
+        public void SetTarget(Transform newTarget) => target = newTarget;
+
         public bool CamRotation => camRotation;        // 외부 노출용 프로퍼티
         [SerializeField] private bool camRotation;        // 카메라 회전 모드 여부
 

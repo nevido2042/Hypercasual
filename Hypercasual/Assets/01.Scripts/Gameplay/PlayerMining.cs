@@ -28,6 +28,7 @@ namespace Hero
         private int upgradeTier = 0;   // 0: 곡괭이, 1: 드릴, 2: 드릴카
         private DrillHead drillInstance;      // 생성된 드릴 인스턴스 참조
         private GameObject drillCarInstance;
+        private RockGridGenerator miningGrid; // 추가: 채광 구역 참조
 
         void Awake()
         {
@@ -42,29 +43,29 @@ namespace Hero
             if (miningTool != null) miningTool.SetActive(false);
         }
 
+        void Start()
+        {
+            miningGrid = Object.FindFirstObjectByType<RockGridGenerator>();
+        }
+
         void Update()
         {
-            CheckForRocks(); // 주변 바위 탐색 (애니메이션 전환용)
+            CheckForRocks(); // 구역 진입 확인 (애니메이션 전환 및 도구 시각화)
         }
 
         /// <summary>
-        /// 주변에 캘 수 있는 바위가 있는지 레이어 기반으로 효율적으로 탐색
+        /// 플레이어가 RockGridGenerator구역 내부에 있는지 확인
         /// </summary>
         void CheckForRocks()
         {
-            isMining = false;
-
-            // Physics.OverlapSphere를 사용하여 레이어로 필터링된 오브젝트들만 탐색 (성능 최적화)
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position, miningRange, rockLayer);
-            foreach (var hitCollider in hitColliders)
+            if (miningGrid == null)
             {
-                MineableRock rock = hitCollider.GetComponent<MineableRock>();
-                if (rock != null && rock.CanBeMined)
-                {
-                    isMining = true;
-                    break;
-                }
+                isMining = false;
+                return;
             }
+
+            // 영역 내부에만 있으면 채광 상태(도구 활성화)로 진입
+            isMining = miningGrid.IsInsideGrid(transform.position);
 
             // 가시성 업데이트
             if (upgradeTier == 1)

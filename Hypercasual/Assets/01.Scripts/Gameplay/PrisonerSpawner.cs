@@ -24,10 +24,17 @@ namespace Hero
         public bool autoSpawn = true;
 
         private float nextSpawnTime;
+        private JailController jailController;
+
+        private void Awake()
+        {
+            jailController = Object.FindFirstObjectByType<JailController>();
+        }
 
         void Update()
         {
             if (!autoSpawn) return;
+            if (jailController != null && jailController.IsFull) return;
 
             if (Time.time >= nextSpawnTime)
             {

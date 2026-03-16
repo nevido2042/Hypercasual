@@ -32,9 +32,15 @@ namespace Hero
         public bool IsPrisonerWaiting()
         {
             if (queueManager == null || queueManager.IsQueueEmpty) return false;
+            
+            // 감옥이 꽉 찼으면 더이상 받지 않음
+            if (jailController != null && jailController.IsFull) return false;
+
             Prisoner p = queueManager.GetFrontPrisoner();
             return p != null && !p.IsSatisfied && !p.IsMoving;
         }
+
+        [SerializeField] private JailController jailController; // 참조 추가
 
         void Awake()
         {
