@@ -56,15 +56,45 @@ namespace Hero
                     .SetEase(Ease.InQuint)
                     .SetLink(gameObject)
                     .OnComplete(() => {
-                        if (returnToPool != null) returnToPool.Release();
-                        else Destroy(gameObject);
+                        Hide();
                     });
             }
             else
             {
-                if (returnToPool != null) returnToPool.Release();
-                else Destroy(gameObject, 1.0f);
+                Hide();
             }
+        }
+
+        /// <summary>
+        /// 페이드 아웃 없이 지정된 위치에 계속 떠있는 모드
+        /// </summary>
+        public void SetupPersistent(Vector3 worldPos, string text, Color color)
+        {
+            if (mainCam == null) mainCam = Camera.main;
+
+            worldTargetPos = worldPos;
+            currentOffset = new Vector3(0, 1.5f, 0); // 처음부터 떠있는 위치
+            
+            textMesh.DOKill();
+            DOTween.Kill(this);
+
+            if (textMesh != null)
+            {
+                textMesh.text = text;
+                textMesh.color = color;
+                textMesh.alpha = 1f;
+                textMesh.enabled = true;
+                transform.localScale = Vector3.one;
+            }
+        }
+
+        public void Hide()
+        {
+            textMesh.DOKill();
+            DOTween.Kill(this);
+            
+            if (returnToPool != null) returnToPool.Release();
+            else Destroy(gameObject);
         }
 
         void LateUpdate()

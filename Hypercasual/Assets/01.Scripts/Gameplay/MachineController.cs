@@ -43,8 +43,11 @@ namespace Hero
         {
             while (true)
             {
-                // 기계가 가동 중이 아니고 입력 구역에 젬스톤이 있다면 생산 시작
-                if (!isWorking && inputZone.HasGem())
+                // 기계가 가동 중이 아니고, 입력 구역에 젬스톤이 있으며, 출력 구역에 여유가 있다면 생산 시작
+                bool canWork = !isWorking && inputZone.HasGem();
+                bool hasOutputSpace = outputZone == null || !outputZone.IsFull;
+
+                if (canWork && hasOutputSpace)
                 {
                     yield return StartCoroutine(ProcessGem());
                 }

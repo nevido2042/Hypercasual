@@ -221,7 +221,7 @@ namespace Hero
                 if (cachedCanvas == null) return;
 
                 // 캐릭터 위치에서 약간 위쪽 (너무 높으면 화면 밖으로 나갈 수 있음)
-                Vector3 spawnWorldPos = transform.position + Vector3.up * 2.0f;
+                Vector3 spawnWorldPos = transform.position + Vector3.up * 1.2f;
                 GameObject go = ObjectPoolingManager.Instance.Spawn(maxTextPrefab, spawnWorldPos, Quaternion.identity, cachedCanvas.transform);
                 
                 FloatingText ft = go.GetComponent<FloatingText>();

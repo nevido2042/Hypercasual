@@ -15,6 +15,8 @@ namespace Hero
         [SerializeField] private float stackSpacing = 0.5f;     // 가로 간격 (2줄 사이)
         [SerializeField] private float stackHeight = 0.2f;      // 세로 높이 간격
         [SerializeField] private Transform stackContainer;      // 젬스톤이 쌓일 부모 오브젝트
+        [SerializeField] private int maxCapacity = 20;          // 최대 적재량
+        [SerializeField] private GameObject maxTextPrefab;      // "MAX" 텍스트 프리팹
 
         [Header("Visuals")]
         [SerializeField] private MeshRenderer markerRenderer;   // 구역 마커 렌더러
@@ -25,6 +27,11 @@ namespace Hero
         private Coroutine unloadCoroutine;
         private PlayerStack playerStack;
         private Material markerMaterial;
+        private float lastMaxTextTime = -1f;
+        private Canvas cachedCanvas;
+        private FloatingText persistentMaxText;
+
+        public bool IsFull => deliveredGems.Count >= maxCapacity;
 
         void Awake()
         {
@@ -93,7 +100,16 @@ namespace Hero
 
         public void DeliverGem(Transform gem)
         {
+            if (IsFull)
+            {
+                // 가득 찬 경우 즉시 파괴/반환
+                ObjectPoolingManager.Instance.Release(gem.gameObject);
+                UpdateMaxText();
+                return;
+            }
+
             deliveredGems.Add(gem);
+            UpdateMaxText();
             int index = deliveredGems.Count - 1;
 
             // 2줄 쌓기 위치 계산
@@ -152,7 +168,43 @@ namespace Hero
             Transform gem = deliveredGems[lastIndex];
             deliveredGems.RemoveAt(lastIndex);
             
+            UpdateMaxText();
             return gem;
         }
+
+        private void UpdateMaxText()
+        {
+            if (IsFull)
+            {
+                if (persistentMaxText == null)
+                {
+                    if (maxTextPrefab == null) return;
+                    if (cachedCanvas == null)
+                    {
+                        GameObject canvasObj = GameObject.FindWithTag("MainCanvas");
+                        if (canvasObj != null) cachedCanvas = canvasObj.GetComponent<Canvas>();
+                        if (cachedCanvas == null) cachedCanvas = Object.FindFirstObjectByType<Canvas>();
+                    }
+                    if (cachedCanvas == null) return;
+
+                    Vector3 spawnWorldPos = transform.position;
+                    GameObject textObj = ObjectPoolingManager.Instance.Spawn(maxTextPrefab, spawnWorldPos, Quaternion.identity, cachedCanvas.transform);
+                    persistentMaxText = textObj.GetComponent<FloatingText>();
+                    if (persistentMaxText != null)
+                    {
+                        persistentMaxText.SetupPersistent(spawnWorldPos, "MAX", Color.red);
+                    }
+                }
+            }
+            else
+            {
+                if (persistentMaxText != null)
+                {
+                    persistentMaxText.Hide();
+                    persistentMaxText = null;
+                }
+            }
+        }
+
     }
 }
