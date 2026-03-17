@@ -78,11 +78,8 @@ namespace Hero
 
                 if (Time.time >= nextMineTime)
                 {
-                    if (audioSource != null && miningSound != null && IsOnScreen())
-                    {
-                        audioSource.PlayOneShot(miningSound);
-                    }
-                    targetRock.Mine(gameObject);
+                    // 실질적인 채굴 처리는 애니메이션 이벤트 'PerformMiningHit'에서 수행함
+                    // 여기서는 애니메이션 타이밍을 위한 시간 체크만 수행 (또는 애니메이션 루프에 맡김)
                     nextMineTime = Time.time + mineInterval;
                 }
             }
@@ -165,6 +162,23 @@ namespace Hero
             agent.isStopped = false;
             if (anim != null) anim.SetBool(miningAnimParam, false);
             if (miningTool != null) miningTool.SetActive(false);
+        }
+
+        /// <summary>
+        /// 애니메이션 타격 이벤트 시점에 호출되어 실제 바위를 채굴하는 함수
+        /// </summary>
+        public void PerformMiningHit()
+        {
+            if (targetRock == null || !targetRock.CanBeMined) return;
+
+            // 사운드 재생 (IsOnScreen 체크 제거 - 사용자 요청대로 정확한 시점 중시)
+            if (audioSource != null && miningSound != null)
+            {
+                audioSource.PlayOneShot(miningSound);
+            }
+
+            // 데미지 1 전달 (2번 타격 필요)
+            targetRock.Mine(1, gameObject);
         }
 
         private bool IsOnScreen()

@@ -21,9 +21,11 @@ namespace Hero
 
         [Header("밸런스 설정")]
         [SerializeField] private float respawnTime = 5.0f; // 바위가 다시 생성되는 시간 (초)
+        [SerializeField] private int maxHp = 2; // 바위의 최대 체력
 
         private Vector3 originalScale; // 원래 크기 저장용
         public bool CanBeMined { get; private set; } = true; // 채굴 가능 여부
+        private int currentHp;
         private Collider col;
         private Renderer[] renderers;
         private AudioSource audioSource;
@@ -33,6 +35,7 @@ namespace Hero
             originalScale = transform.localScale;
             col = GetComponent<Collider>();
             renderers = GetComponentsInChildren<Renderer>();
+            currentHp = maxHp;
 
             // 오디오 소스 설정
             audioSource = GetComponent<AudioSource>();
@@ -43,12 +46,31 @@ namespace Hero
         /// <summary>
         /// 바위 채굴 실행 (채광 주체에 따라 드랍 위치 변경)
         /// </summary>
-        public void Mine(GameObject miner = null)
+        public void Mine(int damage, GameObject miner = null)
         {
             if (!CanBeMined) return;
+
+            currentHp -= damage;
+
+            // 타격 효과 (사운드 및 파티클) - 부서지지 않더라도 재생
+            if (audioSource != null && breakSound != null)
+            {
+                audioSource.PlayOneShot(breakSound, breakSoundVolume * 0.5f); // 타격 시엔 작게 재생
+            }
+            if (hitParticlePrefab != null)
+            {
+                ObjectPoolingManager.Instance.Spawn(hitParticlePrefab, transform.position, Quaternion.identity);
+            }
+            // 타격 시 흔들리는 연출
+            transform.DOComplete();
+            transform.DOShakePosition(0.2f, 0.1f, 10, 90, false, true).SetLink(gameObject);
+
+            if (currentHp > 0) return;
+
+            // HP가 0이 되면 파괴 처리
             CanBeMined = false;
 
-            // 소리 재생
+            // 파괴 사운드 (원래 볼륨)
             if (audioSource != null && breakSound != null)
             {
                 audioSource.PlayOneShot(breakSound, breakSoundVolume);
@@ -92,12 +114,6 @@ namespace Hero
                 }
             }
             
-            // 파티클 생성 (오브젝트 풀링 사용)
-            if (hitParticlePrefab != null)
-            {
-                ObjectPoolingManager.Instance.Spawn(hitParticlePrefab, transform.position, Quaternion.identity);
-            }
-
             // DOTween 작아지는 애니메이션 대신 즉시 렌더러를 꺼서 아예 안 보이게 처리
             if (renderers != null)
             {
@@ -119,6 +135,7 @@ namespace Hero
             // 상태 복구 및 충돌 활성화
             if (col != null) col.enabled = true;
             CanBeMined = true;
+            currentHp = maxHp;
             
             // 렌더러 다시 켜기
             if (renderers != null)

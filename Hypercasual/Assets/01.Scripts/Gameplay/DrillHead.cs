@@ -102,7 +102,7 @@ namespace Hero
                 if (rock != null && rock.CanBeMined)
                 {
                     // 드릴은 플레이어의 자식이므로 최상단 루트(플레이어)를 전달
-                    rock.Mine(transform.root.gameObject);
+                    rock.Mine(2, transform.root.gameObject); // 드릴은 데미지 2
                 }
             }
         }

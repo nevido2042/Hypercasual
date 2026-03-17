@@ -77,8 +77,26 @@ namespace Hero
                 return;
             }
 
-            // 영역 내부에만 있으면 채광 상태(도구 활성화)로 진입
-            isMining = miningGrid.IsInsideGrid(transform.position);
+            // 영역 내부에 있는지 먼저 체크
+            bool insideGrid = miningGrid.IsInsideGrid(transform.position);
+
+            if (!insideGrid)
+            {
+                isMining = false;
+            }
+            else
+            {
+                // 곡괭이 모드(upgradeTier 0)일 때는 전방에 실제 캘 수 있는 바위가 있을 때만 채광 상태로 진입
+                if (upgradeTier == 0)
+                {
+                    isMining = HasTargetRockInFront();
+                }
+                else
+                {
+                    // 드릴/드릴카 모드일 때는 구역 내부에만 있으면 채광 상태 유지
+                    isMining = true;
+                }
+            }
 
             // 가시성 업데이트
             if (upgradeTier == 1)
@@ -150,6 +168,28 @@ namespace Hero
         }
 
         /// <summary>
+        /// 전방 사거리 내에 실제 캘 수 있는 바위가 있는지 확인
+        /// </summary>
+        private bool HasTargetRockInFront()
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, miningRange, rockLayer);
+            foreach (var hitCollider in hitColliders)
+            {
+                MineableRock rock = hitCollider.GetComponent<MineableRock>();
+                if (rock != null && rock.CanBeMined)
+                {
+                    Vector3 dirToRock = (rock.transform.position - transform.position).normalized;
+                    dirToRock.y = 0;
+                    float dot = Vector3.Dot(transform.forward, dirToRock);
+                    
+                    // 전방 약 60도 범위 내에 바위가 있으면 true
+                    if (dot > 0.5f) return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         /// 애니메이터 타격 이벤트 시점에 호출되어 실제 바위를 채굴하는 함수
         /// </summary>
         public void PerformMiningHit()
@@ -166,13 +206,22 @@ namespace Hero
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, miningRange, rockLayer);
             List<MineableRock> rocksInRange = new List<MineableRock>();
 
-            // 범위 내 캘 수 있는 모든 바위 수집
+            // 범위 내 캘 수 있는 모든 바위 수집 및 전방 체크
             foreach (var hitCollider in hitColliders)
             {
                 MineableRock rock = hitCollider.GetComponent<MineableRock>();
                 if (rock != null && rock.CanBeMined)
                 {
-                    rocksInRange.Add(rock);
+                    // 전방 방향 체크 (Dot Product)
+                    Vector3 dirToRock = (rock.transform.position - transform.position).normalized;
+                    dirToRock.y = 0;
+                    float dot = Vector3.Dot(transform.forward, dirToRock);
+
+                    // 약 60도(cos 60 = 0.5) 정도의 전방 범위만 허용
+                    if (dot > 0.5f)
+                    {
+                        rocksInRange.Add(rock);
+                    }
                 }
             }
 
@@ -187,7 +236,7 @@ namespace Hero
             {
                 if (minedCount >= maxMineTargets) break;
                 
-                rock.Mine(gameObject); // 바위 채굴 실행
+                rock.Mine(2, gameObject); // 바위 채굴 실행 (플레이어는 데미지 2)
                 minedCount++;
             }
         }

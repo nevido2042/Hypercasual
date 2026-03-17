@@ -22,11 +22,8 @@ namespace Hero
             if (currentTime >= hitTime && !hasHit)
             {
                 hasHit = true;
-                PlayerMining mining = animator.GetComponent<PlayerMining>();
-                if (mining != null)
-                {
-                    mining.PerformMiningHit(); // 실제 타격 판정 실행
-                }
+                // 애니메이션 타격 시점에 이벤트를 전송 (PlayerMining, MinerAI 등 모든 컴포넌트 대응)
+                animator.gameObject.SendMessage("PerformMiningHit", SendMessageOptions.DontRequireReceiver);
             }
             // 루프가 돌아 처음으로 가면 타격 상태 초기화
             else if (currentTime < hitTime && hasHit)
