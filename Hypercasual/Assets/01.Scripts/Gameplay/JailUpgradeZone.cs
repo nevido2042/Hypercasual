@@ -91,6 +91,11 @@ namespace Hero
                 .SetEase(Ease.InBack)
                 .SetLink(gameObject)
                 .OnComplete(() => {
+                    // 감옥 확장이 완전히 끝나면 계속하기 버튼 표시
+                    if (GameContinueUI.Instance != null)
+                    {
+                        GameContinueUI.Instance.ShowContinueButton();
+                    }
                     gameObject.SetActive(false);
                 });
         }

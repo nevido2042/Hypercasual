@@ -114,6 +114,30 @@ namespace Hero
             if (rtp != null) rtp.Release();
             else Destroy(obj); // 풀링 대상이 아니면 그냥 파괴
         }
+
+        /// <summary>
+        /// 모든 풀을 비우고 생성된 오브젝트들을 제거합니다. (씬 전환/재시작용)
+        /// </summary>
+        public void ClearAllPools()
+        {
+            foreach (var pool in poolDictionary.Values)
+            {
+                // Clear()는 풀 내부의 비활성 오브젝트들을 actionOnDestroy를 통해 제거함
+                pool.Clear();
+            }
+
+            // 활성 상태로 남아있을 수 있는 오브젝트들을 포함하여 그룹 루트들을 제거
+            foreach (var root in groupRoots.Values)
+            {
+                if (root != null) Destroy(root.gameObject);
+            }
+
+            poolDictionary.Clear();
+            groupRoots.Clear();
+            originalScales.Clear();
+            
+            Debug.Log("[ObjectPoolingManager] All pools cleared for scene restart.");
+        }
     }
 
     public class ReturnToPool : MonoBehaviour
