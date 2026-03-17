@@ -128,6 +128,8 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 0
+  drillSound: {fileID: 8300000, guid: cc3f0595312980f41aabe1f634c5e26d, type: 3}
+  drillVolume: 0.5
 --- !u!1001 &7283644487006877498
 PrefabInstance:
   m_ObjectHideFlags: 0

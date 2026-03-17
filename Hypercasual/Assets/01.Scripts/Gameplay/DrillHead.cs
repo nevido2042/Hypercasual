@@ -12,7 +12,12 @@ namespace Hero
         [SerializeField] private Transform rotateVisual; // 회전할 시각적 오브젝트
         
         [SerializeField] private LayerMask targetLayer;  // 감지할 레이어
-        
+
+        [Header("Audio")]
+        [SerializeField] private AudioClip drillSound;   // 드릴 작동 소리 (Drill.wav)
+        [SerializeField, Range(0f, 1f)] private float drillVolume = 0.5f;
+
+        private AudioSource audioSource;
         private bool isMining = false;
 
         void Awake()
@@ -21,6 +26,30 @@ namespace Hero
             if (rotateVisual == null)
             {
                 rotateVisual = transform.Find("Top_Front");
+            }
+
+            // 오디오 소스 설정
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.clip = drillSound;
+            audioSource.loop = true;
+            audioSource.playOnAwake = false;
+            audioSource.volume = drillVolume;
+        }
+
+        private void OnEnable()
+        {
+            if (isMining && audioSource != null && drillSound != null && !audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (audioSource != null && audioSource.isPlaying)
+            {
+                audioSource.Stop();
             }
         }
 
@@ -35,7 +64,25 @@ namespace Hero
 
         public void SetActiveMining(bool active)
         {
-            isMining = active;
+            if (isMining != active)
+            {
+                isMining = active;
+                
+                if (isMining)
+                {
+                    if (audioSource != null && drillSound != null && !audioSource.isPlaying)
+                    {
+                        audioSource.Play();
+                    }
+                }
+                else
+                {
+                    if (audioSource != null && audioSource.isPlaying)
+                    {
+                        audioSource.Stop();
+                    }
+                }
+            }
         }
 
         public void SetTargetLayer(LayerMask layer)

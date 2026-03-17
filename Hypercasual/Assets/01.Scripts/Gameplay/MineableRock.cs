@@ -15,6 +15,10 @@ namespace Hero
         [Header("파티클 설정")]
         [SerializeField] private GameObject hitParticlePrefab; // 여기에 HitRock02 프리팹을 할당하세요
 
+        [Header("오디오 설정")]
+        [SerializeField] private AudioClip breakSound; // 바위 파괴 소리 (RockBreak.wav)
+        [SerializeField, Range(0f, 1f)] private float breakSoundVolume = 1.0f; // 파괴 소리 크기
+
         [Header("밸런스 설정")]
         [SerializeField] private float respawnTime = 5.0f; // 바위가 다시 생성되는 시간 (초)
 
@@ -22,12 +26,18 @@ namespace Hero
         public bool CanBeMined { get; private set; } = true; // 채굴 가능 여부
         private Collider col;
         private Renderer[] renderers;
+        private AudioSource audioSource;
 
         void Start()
         {
             originalScale = transform.localScale;
             col = GetComponent<Collider>();
             renderers = GetComponentsInChildren<Renderer>();
+
+            // 오디오 소스 설정
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
         }
 
         /// <summary>
@@ -37,6 +47,12 @@ namespace Hero
         {
             if (!CanBeMined) return;
             CanBeMined = false;
+
+            // 소리 재생
+            if (audioSource != null && breakSound != null)
+            {
+                audioSource.PlayOneShot(breakSound, breakSoundVolume);
+            }
 
             // 추가: 현재 진행 중인 모든 트윈 중지 (예: 리스폰 연출 중 다시 채굴되는 경우 대비)
             transform.DOKill();

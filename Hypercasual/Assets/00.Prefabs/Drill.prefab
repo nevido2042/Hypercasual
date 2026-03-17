@@ -100,6 +100,8 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
+  drillSound: {fileID: 8300000, guid: cc3f0595312980f41aabe1f634c5e26d, type: 3}
+  drillVolume: 0.5
 --- !u!65 &2623806667083455468
 BoxCollider:
   m_ObjectHideFlags: 0

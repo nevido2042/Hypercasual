@@ -102,6 +102,10 @@ namespace Hero
                     {
                         drillCarInstance.SetActive(isMining);
                         UpdateCharacterPositionForCar(isMining);
+                        
+                        // 추가: 드릴카 내부의 DrillHead 상태도 명시적으로 업데이트
+                        DrillHead carDrill = drillCarInstance.GetComponentInChildren<DrillHead>();
+                        if (carDrill != null) carDrill.SetActiveMining(isMining);
                     }
                 }
                 
