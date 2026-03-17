@@ -35,11 +35,7 @@ namespace Hero
 
         void Start()
         {
-            if (inputZone == null)
-            {
-                Debug.LogWarning($"{gameObject.name}: Input Zone이 설정되지 않았습니다.");
-                return;
-            }
+            if (inputZone == null) return;
             StartCoroutine(ProductionRoutine());
         }
 

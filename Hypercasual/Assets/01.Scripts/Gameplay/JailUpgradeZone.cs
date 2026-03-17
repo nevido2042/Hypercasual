@@ -31,7 +31,6 @@ namespace Hero
 
         private System.Collections.IEnumerator UpgradeSequence()
         {
-            Debug.Log("[JailUpgradeZone] Payment complete! Starting upgrade sequence...");
 
             // 1. 카메라 타겟 변경
             if (followTarget != null && viewTarget != null)
@@ -72,7 +71,6 @@ namespace Hero
             {
                 int newCapacity = jailController.MaxCapacity * capacityMultiplier;
                 jailController.MaxCapacity = newCapacity;
-                Debug.Log($"[JailUpgradeZone] Jail Expanded! New Capacity: {newCapacity}");
             }
 
             // 4. 연출 감상 대기 (2초)

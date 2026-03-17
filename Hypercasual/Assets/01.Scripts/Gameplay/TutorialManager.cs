@@ -119,7 +119,6 @@ namespace Hero
         private System.Collections.IEnumerator DelayedNextStep()
         {
             isTransitioning = true;
-            Debug.Log($"[Tutorial] Step {currentStep} Action Detected. Moving to next in 1s...");
             
             yield return new WaitForSeconds(1.0f);
             
@@ -134,7 +133,6 @@ namespace Hero
         private System.Collections.IEnumerator ShowUpgradeZoneSequence()
         {
             isTransitioning = true;
-            Debug.Log("[Tutorial] Money Collected. Showing Upgrade Zone...");
 
             yield return new WaitForSeconds(1.0f);
 

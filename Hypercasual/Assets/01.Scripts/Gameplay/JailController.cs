@@ -135,10 +135,6 @@ namespace Hero
             }
         }
 
-        public void OnPrisonerArrived()
-        {
-            // 더 이상 사용되지 않음 (센서 트리거 방식에서 리스트 체크 방식으로 변경)
-        }
 
         public void OnPrisonerEntered(GameObject prisoner)
         {
@@ -173,8 +169,6 @@ namespace Hero
 
         private System.Collections.IEnumerator FullSequenceRoutine()
         {
-            Debug.Log("[JailController] Jail is full! Starting sequence...");
-            
             yield return new WaitForSeconds(0.5f);
 
             // 카메라 타겟을 업그레이드 존으로 이동

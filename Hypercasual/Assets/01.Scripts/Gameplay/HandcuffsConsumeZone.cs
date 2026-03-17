@@ -44,7 +44,7 @@ namespace Hero
             return p != null && !p.IsSatisfied && !p.IsMoving;
         }
 
-        [SerializeField] private JailController jailController; // 참조 추가
+        private JailController jailController; // SerializeField 제거
 
         void Awake()
         {
@@ -59,7 +59,11 @@ namespace Hero
             if (queueManager == null)
             {
                 queueManager = FindFirstObjectByType<PrisonerQueueManager>();
-                if (queueManager != null) Debug.Log("[ConsumeZone] Successfully auto-assigned PrisonerQueueManager.");
+            }
+
+            if (jailController == null)
+            {
+                jailController = FindFirstObjectByType<JailController>();
             }
 
             _audioSource = GetComponent<AudioSource>();

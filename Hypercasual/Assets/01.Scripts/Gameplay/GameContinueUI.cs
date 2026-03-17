@@ -11,13 +11,16 @@ namespace Hero
     {
         public static GameContinueUI Instance { get; private set; }
 
-        [SerializeField] private GameObject continuePanel;
-        [SerializeField] private Button continueButton;
+        private GameObject continuePanel;
+        private Button continueButton;
 
         private void Awake()
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+
+            continuePanel = gameObject;
+            continueButton = GetComponentInChildren<Button>(true);
 
             if (continuePanel != null) continuePanel.SetActive(false);
             if (continueButton != null) continueButton.onClick.AddListener(ContinueGame);
@@ -36,8 +39,6 @@ namespace Hero
 
         private void ContinueGame()
         {
-            Debug.Log("[GameContinueUI] Continuing game...");
-            
             if (continuePanel != null)
             {
                 continuePanel.transform.DOKill();

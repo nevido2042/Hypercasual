@@ -57,7 +57,6 @@ namespace Hero
                 {
                     StopCoroutine(exitDelayCoroutine);
                     exitDelayCoroutine = null;
-                    Debug.Log($"[HandcuffsDeliveryZone] Exit cancelled due to re-entry: {other.gameObject.name}");
                     return;
                 }
 
@@ -66,7 +65,6 @@ namespace Hero
                 {
                     currentProvider = provider;
                     SetColor(activeColor);
-                    Debug.Log($"[HandcuffsDeliveryZone] Provider detected: {other.gameObject.name} (Parent: {other.transform.parent?.name})");
 
                     // ConsumeZone에 배달자 도착 알림
                     if (consumeZone != null) consumeZone.SetDelivererInZone(true);
@@ -99,7 +97,6 @@ namespace Hero
             // 유예 시간이 지났는데도 여전히 비어있다면 진짜 퇴장 처리
             if (_activeColliders.Count == 0)
             {
-                Debug.Log($"[HandcuffsDeliveryZone] Provider fully left after grace period: {objectName}");
                 SetColor(inactiveColor);
 
                 // ConsumeZone에 배달자 퇴장 알림
@@ -127,14 +124,12 @@ namespace Hero
                         Transform item = currentProvider.RemoveFromFrontStack();
                         if (item != null)
                         {
-                            Debug.Log($"[HandcuffsDeliveryZone] Taking handcuff from provider and delivering to ConsumeZone.");
                             consumeZone.ReceiveProduct(item);
                             yield return new WaitForSeconds(receiveInterval);
                         }
                     }
                     else
                     {
-                        Debug.LogWarning("HandcuffsDeliveryZone: target consumeZone is not assigned!");
                         yield break;
                     }
                 }

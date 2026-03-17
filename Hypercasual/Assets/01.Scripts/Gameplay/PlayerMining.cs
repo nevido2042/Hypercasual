@@ -233,17 +233,11 @@ namespace Hero
                 miningTool.transform.DOKill();
                 miningTool.transform.DOPunchScale(Vector3.one * 0.5f, 0.5f).SetLink(miningTool);
             }
-            
-            Debug.Log($"[PlayerMining] Upgraded to Tier {upgradeTier}! MaxTargets: {maxMineTargets}, Range: {miningRange}");
         }
 
         private void CreateDrill()
         {
-            if (drillPrefab == null)
-            {
-                Debug.LogWarning("[PlayerMining] Drill Prefab is missing!");
-                return;
-            }
+            if (drillPrefab == null) return;
 
             // 곡괭이 비활성화
             if (miningTool != null) miningTool.SetActive(false);
@@ -265,11 +259,7 @@ namespace Hero
 
         private void CreateDrillCar()
         {
-            if (drillCarPrefab == null)
-            {
-                Debug.LogWarning("[PlayerMining] DrillCar Prefab is missing!");
-                return;
-            }
+            if (drillCarPrefab == null) return;
 
             // 기존 드릴 제거
             if (drillInstance != null) Destroy(drillInstance.gameObject);

@@ -135,8 +135,6 @@ namespace Hero
             poolDictionary.Clear();
             groupRoots.Clear();
             originalScales.Clear();
-            
-            Debug.Log("[ObjectPoolingManager] All pools cleared for scene restart.");
         }
     }
 

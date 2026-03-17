@@ -38,7 +38,6 @@ namespace Hero
         {
             if (currentState == newState) return;
             currentState = newState;
-            Debug.Log($"<color=yellow>[CrewAI] {gameObject.name} State:</color> <b>{newState}</b>");
         }
 
         private void Awake()
@@ -137,7 +136,6 @@ namespace Hero
                 yield return new WaitForSeconds(0.1f);
             }
             
-            Debug.Log($"[CrewAI] Reached StackZone. Starting to take products.");
             agent.isStopped = true;
             agent.velocity = Vector3.zero; // 물리적 관성 제거 및 즉각 정지
 
@@ -165,7 +163,6 @@ namespace Hero
                 else
                 {
                     // 딜리버리 존에 도착함. 
-                    Debug.Log($"[CrewAI] Reached DeliveryZone via Trigger. Stopping agent.");
                     // 1) 들고 있는 수갑이 있거나 2) 소모존에 수갑이 있고 죄수가 있는 동안 대기하며 배달 활성화
                     agent.isStopped = true;
                     agent.velocity = Vector3.zero; // 물리적 관성 제거

@@ -353,7 +353,6 @@ namespace Hero
         public void IncreaseCapacity(int amount)
         {
             maxCapacity += amount;
-            Debug.Log($"[PlayerStack] Capacity increased by {amount}. New MaxCapacity: {maxCapacity}");
         }
     }
 }
