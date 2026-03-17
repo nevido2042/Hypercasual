@@ -1,13 +1,15 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Hero
 {
     /// <summary>
-    /// 플레이어의 8방향 이동 및 회전 로직 (채광 기능 분리됨)
+    /// 플레이어의 8방향 이동 및 회전 로직 (NavMeshAgent 기반으로 전환)
     /// </summary>
+    [RequireComponent(typeof(NavMeshAgent))]
     public class PlayerMovement : MonoBehaviour
     {
-        [SerializeField] private float velocity = 5;      // 이동 속도
+        [SerializeField] private float velocity = 8;      // 이동 속도 (5에서 8로 상향)
         [SerializeField] private float turnSpeed = 10;    // 회전 속도
 
         public Vector2 InputValue => input;              // 외부 노출용 프로퍼티
@@ -22,6 +24,22 @@ namespace Hero
         [HideInInspector]
         [SerializeField] private VirtualJoystick joystick; // 조이스틱 인터페이스 참조
 
+        private NavMeshAgent agent;
+
+        void Awake()
+        {
+            agent = GetComponent<NavMeshAgent>();
+            // 회전은 기존의 Slerp 방식을 사용하기 위해 에이전트 자동 회전은 끔
+            agent.updateRotation = false;
+            // 이동도 수동으로 조이스틱 값에 따라 처리함
+            agent.updatePosition = true;
+
+            // 에이전트 자체 속도 제한 해제 (스크립트의 velocity가 우선되도록)
+            agent.speed = velocity * 2f;
+            agent.acceleration = 1000f;
+            agent.angularSpeed = 0f; // 자체 회전 사용 안 함
+        }
+
         void Start()
         {
             // 메인 카메라 및 관련 스크립트 캐싱
@@ -29,6 +47,20 @@ namespace Hero
             if (cam.GetComponent<FollowTarget>())
             {
                 ft = cam.GetComponent<FollowTarget>();
+            }
+
+            // Rigidbody 설정 최적화
+            Rigidbody rb = GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = true;
+                rb.interpolation = RigidbodyInterpolation.Interpolate;
+            }
+
+            // [추가] 시작 시 플레이어를 가장 가까운 NavMesh 위로 스냅
+            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2.0f, NavMesh.AllAreas))
+            {
+                agent.Warp(hit.position);
             }
         }
 
@@ -40,7 +72,12 @@ namespace Hero
         void FixedUpdate()
         {
             // 입력이 거의 없으면 이동 로직 취소
-            if (Mathf.Abs(input.x) < 0.3 && Mathf.Abs(input.y) < 0.3) return;
+            if (input.sqrMagnitude < 0.01f)
+            {
+                // 입력이 없을 때는 에이전트 정지
+                if (agent.isOnNavMesh) agent.velocity = Vector3.zero;
+                return;
+            }
 
             CalculateDirection(); // 이동 방향 계산
             Rotate();             // 캐릭터 회전
@@ -92,12 +129,20 @@ namespace Hero
         }
 
         /// <summary>
-        /// 캐릭터 전방 방향으로 실제 위치 이동
+        /// NavMeshAgent를 사용한 실제 위치 이동
         /// </summary>
         void Move()
         {
             float speedMultiplier = Mathf.Clamp01(input.magnitude);
-            transform.position += transform.forward * velocity * speedMultiplier * Time.fixedDeltaTime;
+            
+            // [개선] 현재 transform.forward 대신 입력 방향(angle)을 기준으로 즉각적인 이동 방향 계산
+            Vector3 moveDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
+            
+            // NavMeshAgent.Move는 에이전트를 현재 위치에서 일정 델타만큼 이동시키며, NavMesh 범위 내로 제한함
+            if (agent.isOnNavMesh)
+            {
+                agent.Move(moveDir * velocity * speedMultiplier * Time.fixedDeltaTime);
+            }
         }
     }
 }
