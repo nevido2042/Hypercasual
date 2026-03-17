@@ -28,11 +28,14 @@ namespace Hero
         protected PlayerStack playerStack;
         protected Material markerMaterial;
         protected bool isCompleted = false;
+        protected Vector3 originalScale; // 본래 스케일 캐싱
 
         public event System.Action OnPaymentFinished;
 
         protected virtual void Awake()
         {
+            originalScale = transform.localScale;
+
             // UI 참조 자동 탐색
             progressText = FindComponentByName<TMP_Text>("Text (TMP)");
             progressFill = FindComponentByName<Image>("Fill");
@@ -60,6 +63,14 @@ namespace Hero
                     return comp;
             }
             return null;
+        }
+
+        protected virtual void OnEnable()
+        {
+            // 활성화될 때 팝(Pop) 연출 - 캐싱된 원본 스케일로 진행
+            transform.DOKill();
+            transform.localScale = Vector3.zero;
+            transform.DOScale(originalScale, 0.5f).SetEase(Ease.OutBack).SetLink(gameObject);
         }
 
         protected virtual void OnTriggerEnter(Collider other)
@@ -107,7 +118,11 @@ namespace Hero
                         .OnComplete(() => {
                             ObjectPoolingManager.Instance.Release(money.gameObject);
                             if (progressText != null) 
+                            {
+                                progressText.transform.DOKill();
+                                progressText.transform.localScale = Vector3.one;
                                 progressText.transform.DOPunchScale(Vector3.one * 0.2f, 0.2f).SetLink(progressText.gameObject);
+                            }
                         });
 
                     if (currentCash >= targetCash)

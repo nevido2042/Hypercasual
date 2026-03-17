@@ -1,5 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
-    <ui:VisualElement name="MovementHint" style="position: absolute; width: 100%; height: 100%; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0);">
-        <ui:Image name="HintImage" style="width: 256px; height: 256px;" />
-    </ui:VisualElement>
-</ui:UXML>

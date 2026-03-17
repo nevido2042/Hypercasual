@@ -96,18 +96,20 @@ namespace Hero
 
             while (true)
             {
-                // 1. 수갑을 들고 있거나, 소모존에 수갑이 있어 배달이 필요한 경우 들러리 존으로 이동
-                bool hasHandcuffs = hcStack.Count > 0;
-                bool needsActivation = consumeZone != null && consumeZone.HasHandcuffs() && consumeZone.IsPrisonerWaiting();
-
-                if (hasHandcuffs || needsActivation)
+                // 1. 수갑을 들고 있을 때: 무조건 배달 구역으로 이동
+                if (hcStack.Count > 0)
                 {
                     yield return StartCoroutine(ActionMoveToDeliveryZone());
                 }
-                // 2. 들고 있는 게 없고 소모존이 비었을 때 생산존에 제품이 있으면 보충하러 감
+                // 2. 비어있을 때: 생산존에 제품이 있고 소모존에 수갑이 부족하면 보충하러 감 (높은 우선순위)
                 else if (stackZone != null && stackZone.HasProducts && consumeZone != null && !consumeZone.HasHandcuffs())
                 {
                     yield return StartCoroutine(ActionTakeFromStack());
+                }
+                // 3. 비어있지만 소모존에 수갑이 있고 죄수가 대기 중이면: 배달 구역 활성화를 위해 이동
+                else if (consumeZone != null && consumeZone.HasHandcuffs() && consumeZone.IsPrisonerWaiting())
+                {
+                    yield return StartCoroutine(ActionMoveToDeliveryZone());
                 }
                 else
                 {
@@ -152,7 +154,13 @@ namespace Hero
         {
             if (deliveryZone == null) yield break;
             SetState(AIState.MovingToDeliveryZone);
-            agent.SetDestination(deliveryZone.transform.position);
+            
+            // 이미 정지 상태라면(이미 구역 안에서 대기 중이었다면) 불필요하게 풀지 않음
+            if (!isInDeliveryZone)
+            {
+                agent.isStopped = false;
+                agent.SetDestination(deliveryZone.transform.position);
+            }
             
             while (deliveryZone != null)
             {
@@ -163,23 +171,27 @@ namespace Hero
                 else
                 {
                     // 딜리버리 존에 도착함. 
-                    // 1) 들고 있는 수갑이 있거나 2) 소모존에 수갑이 있고 죄수가 있는 동안 대기하며 배달 활성화
                     agent.isStopped = true;
                     agent.velocity = Vector3.zero; // 물리적 관성 제거
+                    
                     yield return new WaitUntil(() => 
-                        (hcStack.Count == 0 && (consumeZone == null || !consumeZone.HasHandcuffs() || !consumeZone.IsPrisonerWaiting())) || 
+                        (hcStack.Count == 0 && (stackZone.HasProducts || consumeZone == null || !consumeZone.HasHandcuffs() || !consumeZone.IsPrisonerWaiting())) || 
                         !isInDeliveryZone);
                     
-                    agent.isStopped = false;
                     break;
                 }
 
-                // 이동 중에 상황이 변하면 이탈 (들고 있는 게 없고 배달 예약도 없을 때)
-                if (hcStack.Count == 0 && (consumeZone == null || !consumeZone.HasHandcuffs() || !consumeZone.IsPrisonerWaiting()))
+                // 이동 중에 상황이 변하면 이탈
+                bool shouldExitEarly = hcStack.Count == 0 && (consumeZone == null || !consumeZone.HasHandcuffs() || !consumeZone.IsPrisonerWaiting());
+                bool needRefill = hcStack.Count == 0 && stackZone != null && stackZone.HasProducts;
+                
+                if (shouldExitEarly || needRefill)
                 {
                     break;
                 }
             }
+            
+            agent.isStopped = false;
         }
 
         private void OnTriggerEnter(Collider other)

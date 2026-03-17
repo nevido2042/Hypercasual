@@ -147,13 +147,10 @@ namespace Hero
                 });
             }
 
-            // 3. 업그레이드 존 활성화 및 연출 (시각적 로직만 남김)
+            // 3. 업그레이드 존 활성화 (애니메이션은 BasePaymentZone에서 자동 수행)
             if (miningUpgradeZone != null)
             {
                 miningUpgradeZone.gameObject.SetActive(true);
-                miningUpgradeZone.transform.DOKill();
-                miningUpgradeZone.transform.localScale = Vector3.zero;
-                miningUpgradeZone.transform.DOScale(upgradeZoneOriginalScale, 0.8f).SetEase(Ease.OutBack).SetLink(miningUpgradeZone.gameObject);
             }
         }
 
