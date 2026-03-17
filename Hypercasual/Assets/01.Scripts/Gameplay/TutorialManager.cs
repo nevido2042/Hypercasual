@@ -21,6 +21,7 @@ namespace Hero
     {
         [Header("References")]
         [SerializeField] private TutorialMarker marker;
+        public TutorialMarker Marker => marker;
         [SerializeField] private Vector3 markerOffset = new Vector3(0, 2.5f, 0);
 
         [Header("Zones")]
