@@ -10,6 +10,7 @@ namespace Hero
     {
         [Header("Upgrade Settings")]
         [SerializeField] private int maxUpgradeLevel = 3;
+        [SerializeField] private int[] upgradeCosts = { 4, 10, 20 }; // 레벨별 요구 금액 (아이템 개수 기준)
         private int currentUpgradeCount = 0;
 
         public event System.Action OnFirstUpgrade;
@@ -18,6 +19,11 @@ namespace Hero
 
         protected override void Awake()
         {
+            // 첫 번째 레벨 비용으로 초기화
+            if (upgradeCosts != null && upgradeCosts.Length > 0)
+            {
+                targetCash = upgradeCosts[0];
+            }
             base.Awake();
         }
 
@@ -64,6 +70,10 @@ namespace Hero
             {
                 // 다음 단계를 위해 초기화
                 DOVirtual.DelayedCall(0.5f, () => {
+                    if (upgradeCosts != null && currentUpgradeCount < upgradeCosts.Length)
+                    {
+                        targetCash = upgradeCosts[currentUpgradeCount];
+                    }
                     currentCash = 0;
                     isCompleted = false;
                     UpdateUI();

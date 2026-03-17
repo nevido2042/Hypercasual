@@ -8,12 +8,16 @@ namespace Hero
     /// </summary>
     public class CinematicBridge : MonoBehaviour
     {
+        public static CinematicBridge Instance { get; private set; }
+        public bool IsFocusing { get; private set; }
+
         private TutorialManager _manager;
         private FollowTarget _followTarget;
         private Transform _playerTransform;
 
         private void Awake()
         {
+            Instance = this;
             _manager = Object.FindFirstObjectByType<TutorialManager>();
             
             GameObject mainCam = GameObject.FindWithTag("MainCamera");
@@ -48,6 +52,7 @@ namespace Hero
 
         private System.Collections.IEnumerator FocusRoutine(Transform target, float duration, System.Action onComplete)
         {
+            IsFocusing = true;
             // 1. 타겟 포커싱
             _followTarget.SetTarget(target);
 
@@ -60,6 +65,7 @@ namespace Hero
                 _followTarget.SetTarget(_playerTransform);
             }
 
+            IsFocusing = false;
             // 4. 완료 알림
             onComplete?.Invoke();
         }

@@ -120,7 +120,7 @@ namespace Hero
         {
             isTransitioning = true;
             
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(0.5f);
             
             currentStep++;
             isTransitioning = false;
@@ -134,7 +134,7 @@ namespace Hero
         {
             isTransitioning = true;
 
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(0.5f);
 
             // 2. 카메라 연출 요청 (포커싱 -> 2초 대기 -> 복구 콜백)
             if (miningUpgradeZone != null)

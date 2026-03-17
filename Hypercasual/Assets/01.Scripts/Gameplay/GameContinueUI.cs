@@ -10,6 +10,7 @@ namespace Hero
     public class GameContinueUI : MonoBehaviour
     {
         public static GameContinueUI Instance { get; private set; }
+        public bool IsVisible => continuePanel != null && continuePanel.activeSelf;
 
         private GameObject continuePanel;
         private Button continueButton;

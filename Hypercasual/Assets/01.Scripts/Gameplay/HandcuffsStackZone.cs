@@ -22,7 +22,6 @@ namespace Hero
 
 
         private List<Transform> stackedProducts = new List<Transform>();
-        private float lastMaxTextTime = -1f;
         private Canvas cachedCanvas;
         private FloatingText persistentMaxText;
 

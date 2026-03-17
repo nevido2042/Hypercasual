@@ -138,7 +138,7 @@ namespace Hero
         {
             if (progressText != null)
             {
-                progressText.text = (targetCash - currentCash).ToString();
+                progressText.text = ((targetCash - currentCash) * 5).ToString();
             }
 
             if (progressFill != null)

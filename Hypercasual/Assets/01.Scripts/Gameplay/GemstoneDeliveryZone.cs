@@ -27,7 +27,6 @@ namespace Hero
         private Coroutine unloadCoroutine;
         private PlayerStack playerStack;
         private Material markerMaterial;
-        private float lastMaxTextTime = -1f;
         private Canvas cachedCanvas;
         private FloatingText persistentMaxText;
 

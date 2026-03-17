@@ -25,7 +25,7 @@ namespace Hero
             {
                 float mag = movement.InputValue.magnitude;
                 // 드릴카에 실제로 탑승 중일 때만 뛰지 않고 가만히 서있음(Idle)
-                float speed = (mag > 0.5f && !mining.IsBoardingDrillCar) ? mag : 0f;
+                float speed = (mag > 0.1f && !mining.IsBoardingDrillCar) ? mag : 0f;
                 anim.SetFloat("Run", speed);
             }
 
