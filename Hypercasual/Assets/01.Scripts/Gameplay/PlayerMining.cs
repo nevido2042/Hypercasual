@@ -23,6 +23,7 @@ namespace Hero
         [SerializeField] private AudioClip miningSound;        // 채광 사운드 (Mining.wav)
         
         private AudioSource audioSource;
+        private PlayerStack _playerStack;
         
         public bool IsMining => isMining;
         public bool IsDrillUpgraded => upgradeTier >= 1; // 1단계 이상(드릴/드릴카) 여부
@@ -51,6 +52,8 @@ namespace Hero
             audioSource = GetComponent<AudioSource>();
             if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
+
+            _playerStack = GetComponent<PlayerStack>();
         }
 
         void Start()
@@ -203,6 +206,12 @@ namespace Hero
             else if (upgradeTier == 2)
             {
                 CreateDrillCar();
+            }
+
+            // 적재량 증가 추가
+            if (_playerStack != null)
+            {
+                _playerStack.IncreaseCapacity(10);
             }
 
             maxMineTargets += 2; // 티어 상승 시 타격 대상 크게 증가

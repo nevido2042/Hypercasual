@@ -346,5 +346,14 @@ namespace Hero
         }
 
         public bool HasHandcuffs() => handcuffsStack.Count > 0;
+
+        /// <summary>
+        /// 최대 적재량을 늘립니다.
+        /// </summary>
+        public void IncreaseCapacity(int amount)
+        {
+            maxCapacity += amount;
+            Debug.Log($"[PlayerStack] Capacity increased by {amount}. New MaxCapacity: {maxCapacity}");
+        }
     }
 }
