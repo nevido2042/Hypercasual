@@ -28,6 +28,9 @@ namespace Hero
             if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
 
+            // UI 사운드는 2D로 설정 (위치에 상관없이 잘 들리도록)
+            audioSource.spatialBlend = 0.0f;
+
             if (continuePanel != null) continuePanel.SetActive(false);
             if (continueButton != null) continueButton.onClick.AddListener(ContinueGame);
         }

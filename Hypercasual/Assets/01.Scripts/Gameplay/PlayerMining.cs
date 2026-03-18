@@ -58,6 +58,12 @@ namespace Hero
             if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
 
+            // 3D Sound Settings
+            audioSource.spatialBlend = 1.0f;
+            audioSource.rolloffMode = AudioRolloffMode.Linear;
+            audioSource.minDistance = 2f;
+            audioSource.maxDistance = 20f;
+
             _playerStack = GetComponent<PlayerStack>();
             _agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
             if (_agent != null) _defaultAgentOffset = _agent.baseOffset;

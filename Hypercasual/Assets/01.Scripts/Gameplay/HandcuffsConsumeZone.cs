@@ -69,6 +69,12 @@ namespace Hero
             _audioSource = GetComponent<AudioSource>();
             if (_audioSource == null) _audioSource = gameObject.AddComponent<AudioSource>();
             _audioSource.playOnAwake = false;
+
+            // 3D Sound Settings
+            _audioSource.spatialBlend = 1.0f;
+            _audioSource.rolloffMode = AudioRolloffMode.Linear;
+            _audioSource.minDistance = 2f;
+            _audioSource.maxDistance = 20f;
         }
 
         void Update()
