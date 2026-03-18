@@ -52,6 +52,8 @@ namespace Hero
 
         private float nextMaxTextTime = 0f;
         private const float MAX_TEXT_COOLDOWN = 0.5f;
+
+        private Vector3 _stackPointsOffset = Vector3.zero; // 추가: 드릴카 등을 위한 오프셋
         
         [Header("애니메이션 설정")]
         [SerializeField] private float stackJumpDuration = 0.25f; // 점프/회전 시간
@@ -158,7 +160,7 @@ namespace Hero
             // 젬스톤 줄은 항상 앞쪽(첫 번째 줄) 고정
             // 현금 줄은 젬스톤이 있을 때만 더 뒤로 밀려남
             float moneyTargetZ = (stackList.Count > 0) ? (baseBackOffset - stackLineDistance) : baseBackOffset;
-            Vector3 targetPos = new Vector3(0, 1f, moneyTargetZ);
+            Vector3 targetPos = new Vector3(0, 1f, moneyTargetZ) + _stackPointsOffset;
 
             if (moneyStackPoint != null)
             {
@@ -168,6 +170,16 @@ namespace Hero
                     .SetEase(Ease.OutQuad)
                     .SetLink(moneyStackPoint.gameObject);
             }
+
+            // 젬스톤과 수갑 위치도 즉시 업데이트 (비애니메이션)
+            if (stackPoint != null) stackPoint.localPosition = new Vector3(0, 1f, baseBackOffset) + _stackPointsOffset;
+            if (frontStackPoint != null) frontStackPoint.localPosition = new Vector3(0, 1f, Mathf.Abs(baseBackOffset)) + _stackPointsOffset;
+        }
+
+        public void SetStackPointsOffset(Vector3 offset)
+        {
+            _stackPointsOffset = offset;
+            UpdateStackPositions();
         }
 
         public void AddToStack(GameObject gemstoneGO)

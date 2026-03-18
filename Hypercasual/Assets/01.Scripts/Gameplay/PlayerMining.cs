@@ -18,23 +18,28 @@ namespace Hero
         [SerializeField] private GameObject miningTool;        // 손에 들 곡괭이 오브젝트
         [SerializeField] private GameObject drillPrefab;       // 업그레이드용 드릴 프리팹
         [SerializeField] private GameObject drillCarPrefab;    // 업그레이드용 드릴카 프리팹
+        [SerializeField] private float carBoardHeightOffset = 0.45f; // 드릴카 탑승 시 전체 높이 오프셋
+        [SerializeField] private Vector3 carSeatLocalPos = new Vector3(0, 1.1f, -0.6f); // 드릴카 내부 좌석 위치
+        [SerializeField] private Vector3 carTrunkStackOffset = new Vector3(0, 0.5f, -1.2f); // 드릴카 트렁크 스택 오프셋
 
         [Header("오디오 설정")]
         [SerializeField] private AudioClip miningSound;        // 채광 사운드 (Mining.wav)
         
         private AudioSource audioSource;
         private PlayerStack _playerStack;
-        
-        public bool IsMining => isMining;
-        public bool IsDrillUpgraded => upgradeTier >= 1; // 1단계 이상(드릴/드릴카) 여부
-        public int UpgradeTier => upgradeTier;           // 현재 업그레이드 티어
-        public bool IsBoardingDrillCar => upgradeTier == 2 && isMining; // 드릴카 실제 탑승 여부 extension.
+        private UnityEngine.AI.NavMeshAgent _agent;
+        private float _defaultAgentOffset;
 
         private bool isMining = false; // 현재 주변에 캘 바위가 있는지 상태
         private int upgradeTier = 0;   // 0: 곡괭이, 1: 드릴, 2: 드릴카
         private DrillHead drillInstance;      // 생성된 드릴 인스턴스 참조
         private GameObject drillCarInstance;
         private RockGridGenerator miningGrid; // 추가: 채광 구역 참조
+        
+        public bool IsMining => isMining;
+        public bool IsDrillUpgraded => upgradeTier >= 1; // 1단계 이상(드릴/드릴카) 여부
+        public int UpgradeTier => upgradeTier;           // 현재 업그레이드 티어
+        public bool IsBoardingDrillCar => upgradeTier == 2 && isMining; // 드릴카 실제 탑승 여부 extension.
 
         void Awake()
         {
@@ -54,6 +59,8 @@ namespace Hero
             audioSource.playOnAwake = false;
 
             _playerStack = GetComponent<PlayerStack>();
+            _agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+            if (_agent != null) _defaultAgentOffset = _agent.baseOffset;
         }
 
         void Start()
@@ -155,14 +162,35 @@ namespace Hero
             {
                 if (boarding)
                 {
-                    // 드릴카 의자 위치 (약간 높게, 뒤쪽으로)
-                    characterRoot.localPosition = new Vector3(0, 1.5f, -0.6f);
+                    // [개선] 부드러운 탑승 연출 (DOTween)
+                    characterRoot.DOKill();
+                    characterRoot.DOLocalMove(carSeatLocalPos, 0.3f).SetEase(Ease.OutBack).SetLink(gameObject);
+                    
+                    // NavMeshAgent 오프셋을 높여 전체 모델(차량 포함)을 지면 위로 들어올림
+                    if (_agent != null) _agent.baseOffset = _defaultAgentOffset + carBoardHeightOffset;
+
+                    // 스택 위치를 드릴카 트렁크 위치로 조정
+                    if (_playerStack != null)
+                    {
+                        _playerStack.SetStackPointsOffset(carTrunkStackOffset);
+                    }
                 }
                 else
                 {
-                    // 원래 위치 (지면)
-                    characterRoot.localPosition = Vector3.zero;
+                    // [개선] 부드러운 하차 연출
+                    characterRoot.DOKill();
+                    characterRoot.DOLocalMove(Vector3.zero, 0.2f).SetEase(Ease.OutQuad).SetLink(gameObject);
+                    
+                    // NavMeshAgent 오프셋 원복
+                    if (_agent != null) _agent.baseOffset = _defaultAgentOffset;
+
+                    // 스택 위치 원복
+                    if (_playerStack != null)
+                    {
+                        _playerStack.SetStackPointsOffset(Vector3.zero);
+                    }
                 }
+                characterRoot.DOKill(false); // 회전은 즉시 리셋
                 characterRoot.localRotation = Quaternion.identity;
             }
         }
@@ -315,8 +343,8 @@ namespace Hero
 
             // 드릴카 생성 (플레이어의 자식으로 설정하여 함께 이동)
             drillCarInstance = Instantiate(drillCarPrefab, transform);
-            // 차량이 땅에 묻히지 않도록 높이 조절
-            drillCarInstance.transform.localPosition = new Vector3(0, 0.4f, 0); 
+            // 차량 자체의 로컬 위치는 0으로 설정 (NavMeshAgent offset이 지면 높이를 결정함)
+            drillCarInstance.transform.localPosition = Vector3.zero; 
             drillCarInstance.transform.localRotation = Quaternion.identity;
 
             // 드릴카의 DrillHead 설정
