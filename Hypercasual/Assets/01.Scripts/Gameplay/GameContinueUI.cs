@@ -11,7 +11,8 @@ namespace Hero
     {
         public static GameContinueUI Instance { get; private set; }
         public bool IsVisible => continuePanel != null && continuePanel.activeSelf;
-
+        [SerializeField] private AudioClip continueSound;
+        private AudioSource audioSource;
         private GameObject continuePanel;
         private Button continueButton;
 
@@ -22,6 +23,10 @@ namespace Hero
 
             continuePanel = gameObject;
             continueButton = GetComponentInChildren<Button>(true);
+
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
 
             if (continuePanel != null) continuePanel.SetActive(false);
             if (continueButton != null) continueButton.onClick.AddListener(ContinueGame);
@@ -35,6 +40,11 @@ namespace Hero
                 continuePanel.transform.DOKill();
                 continuePanel.transform.localScale = Vector3.zero;
                 continuePanel.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
+
+                if (audioSource != null && continueSound != null)
+                {
+                    audioSource.PlayOneShot(continueSound);
+                }
             }
         }
 

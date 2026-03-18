@@ -1,0 +1,74 @@
+# Gemstone Stack Limit Implementation
+
+Limit the maximum number of gemstones a player can stack to 10.
+
+- [x] Research `PlayerStack.cs` for current stacking logic <!-- id: 0 -->
+- [x] Update `PlayerStack.cs` with `maxCapacity` and "pop" animation <!-- id: 1 -->
+- [x] Update `AddToStack` logic to check against the limit but allow mining execution <!-- id: 2 -->
+- [x] Verify the limit and animation in-game <!-- id: 4 -->
+- [x] Research floating text or UI systems <!-- id: 5 -->
+- [x] Implement floating "Max" text logic in `PlayerStack.cs` <!-- id: 6 -->
+- [x] Create or find a simple Text prefab for the feedback <!-- id: 7 -->
+- [x] Verify UI feedback in-game <!-- id: 8 -->
+- [x] Convert `FloatingText.cs` to handle Screen Space positioning <!-- id: 9 -->
+- [x] Update `PlayerStack.cs` to parent popup to main Canvas <!-- id: 10 -->
+- [x] Verify screen-space UI feedback in-game <!-- id: 12 -->
+- [x] Implement `EffectManager.cs` for Object Pooling <!-- id: 13 -->
+- [x] Optimize lookups in `PlayerStack.cs` (Canvas caching) <!-- id: 14 -->
+- [x] Refactor `MineableRock.cs` and `FloatingText.cs` to use pooling <!-- id: 15 -->
+- [x] Verify performance improvements (Profiler/Memory) <!-- id: 16 -->
+- [x] Implement `PulsingEffect.cs` for floor UI markers <!-- id: 17 -->
+- [x] Verify pulsing animation in-game <!-- id: 18 -->
+- [x] Create pulsing square floor marker in scene <!-- id: 19 -->
+- [x] Implement `GemstoneDeliveryZone.cs` for gemstone unloading <!-- id: 20 -->
+- [x] 드릴 채광 업그레이드 구현
+    - [x] 드릴 채광 시스템 설계 및 계획 수립
+    - [x] DrillHead.cs 스크립트 생성 (접촉 자동 채광)
+    - [x] PlayerMining.cs 수정 (툴 교체 및 드릴 제어 로직)
+    - [x] 드릴 프리팹 설정 및 인스펙터 연결
+    - [x] 기능 검증 (업그레이드 후 동작 확인)
+- [x] 드릴카(DrillCar) 업그레이드 구현
+    - [x] 드릴카 시스템 설계 및 계획 수립
+    - [x] DrillCar 프리팹 설정 (충돌체 및 드릴헤드 추가)
+    - [x] PlayerMining.cs 티어 시스템 확장 (1단계: 드릴, 2단계: 드릴카)
+    - [x] 캐릭터 드릴카 탑승 및 애니메이션 제어 로직 구현
+    - [x] 세부 조정 (조건부 활성화, 높이 및 좌석 위치 조정)
+    - [x] 기능 검증 (최종 단계 업그레이드 확인)
+- [x] 플레이어 현금 수집 및 적재 시스템 통합 테스트
+- [x] PlayerStack.cs 컴파일 오류 수정 및 최적화
+- [x] Rock 그리드 생성 기능 구현
+    - [x] RockGridGenerator.cs 유틸리티 스크립트 작성 (8x30 그리드 지원)
+    - [ ] 에디터 검증 및 테스트
+- [x] Add `RemoveFromStack` method to `PlayerStack.cs` <!-- id: 21 -->
+- [x] Set up Trigger and Material switching in the scene <!-- id: 22 -->
+- [x] Verify delivery logic and 2-column stacking in-game <!-- id: 23 -->
+- [x] Implement `ConveyorBelt.cs` for texture scrolling animation <!-- id: 24 -->
+- [x] Verify conveyor belt movement in-game <!-- id: 25 -->
+- [x] Add `ConsumeGem` to `GemstoneDeliveryZone.cs` <!-- id: 26 -->
+- [x] Implement `MachineController.cs` (Gemstone -> Handcuffs) <!-- id: 27 -->
+- [x] Implement `MovingProduct.cs` for conveyor movement <!-- id: 28 -->
+- [x] Implement `ProductDeliveryZone.cs` for single-line stacking <!-- id: 29 -->
+- [x] Verify full production chain in-game <!-- id: 30 -->
+- [x] Implement idle animations (float/rotate) for stacked items <!-- id: 31 -->
+- [x] Implement `HandleHandcuffsPickup` in `HandcuffsStackZone.cs` <!-- id: 32 -->
+- [x] Add `handcuffs` stack and `AddToFrontStack` to `PlayerStack.cs` <!-- id: 33 -->
+- [x] Implement `HandcuffsConsumeZone.cs` (Visual Stacking) <!-- id: 34 -->
+- [x] Implement `HandcuffsDeliveryZone.cs` (Player Detection) <!-- id: 35 -->
+- [x] Verify separated delivery and stacking flow <!-- id: 36 -->
+- [x] Implement `Prisoner.cs` (AI state and requirements) <!-- id: 37 -->
+- [x] Implement `PrisonerQueueManager.cs` (Queue positioning) <!-- id: 38 -->
+- [x] Update `HandcuffsConsumeZone.cs` to distribute items to Prisoners <!-- id: 39 -->
+- [x] Implement `PrisonerSpawner.cs` (Optional/Bonus for flow) <!-- id: 40 -->
+- [x] Verify Prisoner queue and distribution logic in-game <!-- id: 41 -->
+- [x] Refactor Prisoner UI to Screen-Space (WorldToScreenPoint) <!-- id: 42 -->
+- [x] Implement `PrisonerQueueUI.cs` for tracking the front prisoner <!-- id: 43 -->
+- [x] Remove individual TextMeshPro logic from `Prisoner.cs` <!-- id: 44 -->
+- [x] Implement Prisoner Waypoint System <!-- id: 45 -->
+    - [x] Add `exitWaypoints` to `PrisonerQueueManager.cs` <!-- id: 46 -->
+    - [x] Update `Prisoner.cs` to handle sequential movement targets <!-- id: 47 -->
+    - [x] Update `LeaveArea` logic to follow the exit path <!-- id: 48 -->
+- [x] Verify multi-stage prisoner movement in-game <!-- id: 49 -->
+- [x] Implement Prisoner Reward (Cash) System <!-- id: 50 -->
+    - [x] Create `MoneyStackZone.cs` with grid stacking <!-- id: 51 -->
+    - [x] Update `Prisoner.cs` to reference and call `MoneyStackZone` <!-- id: 52 -->
+    - [x] Verify Cash stacking in 6-unit grid (rows/cols) <!-- id: 53 -->

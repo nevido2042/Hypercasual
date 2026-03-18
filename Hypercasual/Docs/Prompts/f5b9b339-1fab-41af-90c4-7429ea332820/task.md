@@ -1,0 +1,47 @@
+- [x] Configure Top-Down Camera
+  - Add FollowTarget to Main Camera
+  - Set FollowTarget.target to Player
+  - Set FollowTarget.offsetPos to (0, 10, -10)
+- [x] Configure Player Movement
+  - Uncomment cam = Camera.main.transform in EightDirectionMovement.cs
+- [x] Implement Mobile Virtual Joystick
+  - Create VirtualJoystick script
+  - Create Canvas and UI images manually in Hierarchy
+  - Update EightDirectionMovement to support Joystick input
+  - Link UI references to Player joystick variable
+- [x] Refactor Namespace & Run Animation
+  - Remove "CubePeople" namespace from all scripts
+  - Update AnimationController to use Run animation only when input magnitude > 0.5
+  - Apply speed multiplier to movement based on input scale
+- [x] Floating Joystick
+  - Update VirtualJoystick script to show joystick wherever clicked
+  - Make JoystickBG full screen to catch all touch inputs
+  - Separate Joystick visuals relative to the touched center
+- [x] 주석 및 응답 한국어화
+  - 모든 C# 스크립트 파일의 영어 주석을 한국어로 번역 (VirtualJoystick, EightDirectionMovement, AnimationController, FollowTarget, CubePeopleTraffic)
+  - 앞으로의 소통은 모두 한국어로 진행
+- [x] 상체 채광(Mining) 애니메이션 결합
+  - 상체 전용 아바타 마스크(AvatarMask) 생성 및 애니메이터 레이어 분리
+  - 바위에 다가가면 `Mine` 애니메이션이 재생되도록 플레이어 이동 및 애니메이션 컨트롤러 로직 수정
+- [x] 바위 채광 시 DOTween 축소/복구 연출 적용
+  - 바위에 다가가 채광 애니메이션 길이(약 2.26초)만큼 머무르면 바위가 채굴됨 (`MineableRock` 컴포넌트 추가)
+  - DOTween을 이용해 0.3초 만에 0으로 스케일이 줄어들며 사라짐
+  - 1초 대기 후 원래 스케일로 통통 튀며(OutBack) 다시 나타남
+- [x] 애니메이션 기반 타격 판정(PerformMiningHit) 구현
+  - 누적 시간 방식에서 애니메이션 특정 시점에 타격이 발생하는 방식으로 변경
+  - `MiningHitBehaviour` (StateMachineBehaviour)를 통한 타격 타이밍 제어
+  - `maxMineTargets` 변수를 추가하여 향후 드릴 등 광역 채굴 업그레이드 대응 로직 마련
+- [x] 이동/채광 클래스 분리 리팩토링
+  - `EightDirectionMovement`: 이동 로직만 담당하도록 축소
+  - `PlayerMining`: 채광 및 타격 판정 로직을 별도 클래스로 분리
+  - 클래스 분리에 따른 `AnimationController` 및 `MiningHitBehaviour` 연동 구조 개선
+  - 삭제된 프로젝트 스크립트 전원 복구 및 최적화 완료
+- [x] Hero 네임스페이스 적용
+  - 모든 스크립트 파일을 `namespace Hero`로 감싸 코드 구조화 완료
+- [x] 스크립트 폴더 통합 및 중복 제거
+  - `Assets/Scripts` 폴더를 삭제하고 `Assets/01.Scripts`를 메인 작업 경로로 통일 완료
+- [x] 채공 시 곡괭이 장착 구현
+  - 캐릭터의 오른손에 곡괭이를 부착하고 채광 중에만 보이도록 로직 구현 완료
+- [x] 젬스톤 스태킹 시스템 구현
+  - 바위 채굴 시 젬스톤이 생성되어 플레이어 등 뒤로 비행 및 적재 완료
+  - 적재된 젬스톤이 플레이어 정지 시 휘청거리는 연출(DOTween) 적용 완료

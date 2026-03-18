@@ -1,0 +1,42 @@
+- [x] Improve CrewAI stopping logic at `HandcuffsStackZone` <!-- id: 190 -->
+- [x] Resolve jittering issue in `HandcuffsDeliveryZone.cs` <!-- id: 180 -->
+- [x] Fix redundant trigger calls in `HandcuffsDeliveryZone.cs` <!-- id: 170 -->
+- [x] Enhance Audio Feedback <!-- id: 160 -->
+    - [x] Add 'Create' sound to `MachineController.cs` (Handcuff production) <!-- id: 161 -->
+    - [x] Add 'Upgrade' sound capability to `BasePaymentZone.cs` <!-- id: 162 -->
+- [x] Disable all upgrade zones at start (Active only on condition) <!-- id: 145 -->
+- [x] Refactor Visuals & Cinematics to use Delegates <!-- id: 150 -->
+    - [x] Add `OnStepChanged` and `OnCameraFocusRequest` to `TutorialManager.cs` <!-- id: 151 -->
+    - [x] Make `TutorialMarker.cs` autonomous by subscribing to `TutorialManager` <!-- id: 152 -->
+    - [x] Decouple camera logic from `TutorialManager.cs` <!-- id: 153 -->
+- [x] Refactor Progression System to use Delegates <!-- id: 140 -->
+    - [x] Add `OnPaymentFinished` event to `BasePaymentZone.cs` <!-- id: 141 -->
+    - [x] Add `OnFirstUpgrade` event to `MiningUpgradeZone.cs` <!-- id: 142 -->
+    - [x] Centralize unlock logic in `TutorialManager.cs` <!-- id: 143 -->
+    - [x] Clean up direct references in `MinerHireZone.cs` <!-- id: 144 -->
+- [x] Update sequential upgrade zone unlock <!-- id: 130 -->
+    - [x] Adjust Mining Upgrade -> Miner Hire condition (1st upgrade) in `MiningUpgradeZone.cs` <!-- id: 131 -->
+    - [x] Link Miner Hire -> Crew Hire in `MinerHireZone.cs` <!-- id: 132 -->
+    - [x] Link Jail Full -> Jail Upgrade in `JailController.cs` <!-- id: 133 -->
+- [x] Add sound to `HandcuffsConsumeZone.cs` (Deliver to Prisoner) <!-- id: 121 -->
+- [x] Refine gemstone stacking sound <!-- id: 110 -->
+    - [x] Remove sound from `AddToStack` in `PlayerStack.cs` <!-- id: 111 -->
+    - [x] Trigger sound in all removal methods (`RemoveFromStack`, etc.) <!-- id: 103 -->
+- [x] Add mining sound effect <!-- id: 90 -->
+    - [x] Add `AudioSource` and `AudioClip` to `PlayerMining.cs` and `MinerAI.cs` <!-- id: 91 -->
+    - [x] Trigger sound in `MiningHitBehaviour.cs` and `MinerAI.cs` <!-- id: 92 -->
+- [x] Optimize miner audio visibility <!-- id: 95 -->
+    - [x] Implement camera viewport check in `MinerAI.cs` <!-- id: 96 -->
+- [x] Fix marker scale distortion <!-- id: 85 -->
+    - [x] Decouple `TutorialMarker` from parent hierarchy <!-- id: 86 -->
+    - [x] Implement real-time position tracking in `TutorialMarker.cs` <!-- id: 87 -->
+- [x] Enhance jail upgrade sequence <!-- id: 80 -->
+    - [x] Add camera sequence in `JailUpgradeZone.cs` <!-- id: 81 -->
+- [x] Implement jail full detection and response <!-- id: 70 -->
+    - [x] Update `JailController.cs` with full state and UI logic <!-- id: 71 -->
+    - [x] Link `JailUpgradeZone` to `JailController` <!-- id: 72 -->
+    - [x] Control admission line in `HandcuffsConsumeZone` and `PrisonerSpawner` <!-- id: 73 -->
+    - [x] Implement camera targeting in `JailController` <!-- id: 74 -->
+    - [x] Force close door when full in `JailController.cs` <!-- id: 76 -->
+    - [x] Pause prisoner movement when full in `Prisoner.cs` <!-- id: 77 -->
+- [x] Verify transition when jail reaches max capacity <!-- id: 75 -->
