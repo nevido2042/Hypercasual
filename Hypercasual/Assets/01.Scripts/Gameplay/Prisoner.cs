@@ -15,6 +15,7 @@ namespace Hero
         [SerializeField] private int minRequired = 1;
         [SerializeField] private int maxRequired = 5;
         [SerializeField] private float moveSpeed = 5f;
+        [SerializeField] private int rewardMultiplier = 2; // 추가: 죄수 만족 시 지급하는 돈의 배수
 
         [Header("Animations")]
         [SerializeField] private Transform visualContainer;
@@ -315,7 +316,7 @@ namespace Hero
             // 현금 보상 생성
             if (moneyZone != null)
             {
-                moneyZone.SpawnCash(requiredHandcuffs, transform.position);
+                moneyZone.SpawnCash(requiredHandcuffs * rewardMultiplier, transform.position);
             }
 
             LeaveArea();
